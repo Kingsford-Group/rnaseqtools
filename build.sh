@@ -16,3 +16,4 @@ do
 	make
 	cd $dir
 done
+
