@@ -305,14 +305,14 @@ int gtfcuff::acc_quant(const string &qfile, double tpm_threshold)
 		if(s4.find(s) != s4.end() && c.code == '=') correct4++;
 	}
 
-	double sen1 = 100.0 * correct1 / items.size();
-	double sen2 = 100.0 * correct2 / items.size();
-	double sen3 = 100.0 * correct3 / items.size();
-	double sen4 = 100.0 * correct4 / items.size();
-	double pre1 = 100.0 * correct1 / refsize;
-	double pre2 = 100.0 * correct2 / refsize;
-	double pre3 = 100.0 * correct3 / refsize;
-	double pre4 = 100.0 * correct4 / refsize;
+	double pre1 = 100.0 * correct1 / items.size();
+	double pre2 = 100.0 * correct2 / items.size();
+	double pre3 = 100.0 * correct3 / items.size();
+	double pre4 = 100.0 * correct4 / items.size();
+	double sen1 = 100.0 * correct1 / refsize;
+	double sen2 = 100.0 * correct2 / refsize;
+	double sen3 = 100.0 * correct3 / refsize;
+	double sen4 = 100.0 * correct4 / refsize;
 	printf("ROC1: reference = %d prediction = %lu correct = %d sensitivity = %.2lf precision = %.2lf\n", refsize, items.size(), correct1, sen1, pre1);
 	printf("ROC2: reference = %d prediction = %lu correct = %d sensitivity = %.2lf precision = %.2lf\n", refsize, items.size(), correct2, sen2, pre2);
 	printf("ROC3: reference = %d prediction = %lu correct = %d sensitivity = %.2lf precision = %.2lf\n", refsize, items.size(), correct3, sen3, pre3);
