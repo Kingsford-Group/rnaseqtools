@@ -16,10 +16,19 @@ int main(int argc, const char **argv)
 	{
 		cout<<"usage: "<<argv[0]<< " union <input-gtf-file-list> <output-merged-gtf> [options]"<<endl;
 		cout<<"usage: "<<argv[0]<< " intersection <input-gtf-file-list> <output-merged-gtf> [options]"<<endl;
+		cout<<"usage: "<<argv[0]<< " clean <input-gtf-file> <gtf-without-redundancy> [options]"<<endl;
 		return 0;
 	}
 
 	parse_parameters(argc, argv);
+
+	if(string(argv[1]) == "clean")
+	{
+		assert(argc >= 4);
+		genome1 g1(argv[2]);
+		g1.remove_redundancy();
+		g1.write(argv[3]);
+	}
 
 	if(string(argv[1]) == "union")
 	{

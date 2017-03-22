@@ -90,6 +90,26 @@ int genome1::query(const transcript &t, const set<int> &fb)
 	return -1;
 }
 
+int genome1::query(const transcript &t, int max_index)
+{
+	if(t.exons.size() <= 1) return -1;
+	PI32 p = t.get_first_intron();
+	if(intron_index.find(p) == intron_index.end()) return -1;
+	set<int> s = intron_index[p];
+	for(set<int>::iterator it = s.begin(); it != s.end(); it++)
+	{
+		int k = (*it);
+		if(k > max_index) continue;
+		transcript &x = transcripts[k];
+		if(x.strand != t.strand) continue;
+		if(x.seqname != t.seqname) continue;
+		if(x.exons.size() != t.exons.size()) continue;
+		if(x.intron_chain_match(t) == false) continue;
+		return k;
+	}
+	return -1;
+}
+
 int genome1::compare(const genome1 &gy, MII &x2y, MII &y2x)
 {
 	x2y.clear();
@@ -104,6 +124,28 @@ int genome1::compare(const genome1 &gy, MII &x2y, MII &y2x)
 		y2x.insert(PII(i, k));
 		fb.insert(k);
 	}
+	return 0;
+}
+
+int genome1::remove_redundancy()
+{
+	set<int> rd;
+	for(int i = 1; i < transcripts.size(); i++)
+	{
+		transcript &t = transcripts[i];	
+		int k = query(t, i - 1);
+		if(k == -1) continue;
+		rd.insert(i);
+	}
+
+	vector<transcript> v;
+	for(int i = 1; i < transcripts.size(); i++)
+	{
+		if(rd.find(i) != rd.end()) continue;
+		transcript &t = transcripts[i];	
+		v.push_back(t);
+	}
+	transcripts = v;
 	return 0;
 }
 

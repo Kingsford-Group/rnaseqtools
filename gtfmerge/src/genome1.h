@@ -29,11 +29,13 @@ public:
 	int print(int index);
 	int write(const string &file);
 	int add_suffix(const string &p);
+	int remove_redundancy();
 
 private:
 	int build_multiexon_transcripts(const string &file);
 	int build_intron_index();
 	int query(const transcript &t, const set<int> &fb);
+	int query(const transcript &t, int max_index);
 	int compare(const genome1 &gy, MII &x2y, MII &y2x);
 };
 
