@@ -4,8 +4,7 @@
 #include <vector>
 #include <iostream>
 
-#include "genome.h"
-#include "compare.h"
+#include "genome1.h"
 #include "config.h"
 
 using namespace std;
@@ -20,11 +19,12 @@ int main(int argc, const char **argv)
 
 	parse_parameters(argc, argv);
 
-	genome g1(argv[1]);
-	genome g2(argv[2]);
+	genome1 gm1(argv[1]);
+	genome1 gm2(argv[2]);
 
-	if(algo == 1) compare_genome1(g1, g2);
-	if(algo == 2) compare_genome2(g1, g2);
+	//gm1.remove_redundancy();
+	//gm2.remove_redundancy();
+	gm1.compare(gm2);
 
     return 0;
 }
