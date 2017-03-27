@@ -23,6 +23,7 @@ int main(int argc, const char **argv)
 		cout<<"       " <<argv[0] << " classify <cuff.tmap> <pred-gtf-file>"<<endl;
 		cout<<"       " <<argv[0] << " quant <cuff.tmap> <pred-gtf-file> <ref-gtf-file>"<<endl;
 		cout<<"       " <<argv[0] << " split <cuff.tmap> <pred-gtf-file> <true-file> <false-file>"<<endl;
+		cout<<"       " <<argv[0] << " balance <cuff.tmap> <ref-size> <balanced-precision>"<<endl;
 		return 0;
 	}
 
@@ -38,6 +39,13 @@ int main(int argc, const char **argv)
 		assert(argc == 4);
 		gtfcuff cuff(argv[2]);
 		cuff.acc(atoi(argv[3]));
+	}
+
+	if(string(argv[1]) == "balance")
+	{
+		assert(argc == 5);
+		gtfcuff cuff(argv[2]);
+		cuff.balance(atoi(argv[3]), atof(argv[4]));
 	}
 
 	if(string(argv[1]) == "roc-trunc")

@@ -28,7 +28,7 @@ int cuffitem::parse(const string &s)
 	gene_id.assign(buf);
 	sstr>>buf;
 	transcript_id.assign(buf);
-	sstr>>buf>>buf>>buf>>buf>>buf;
+	sstr>>buf>>buf>>buf>>buf;
 	coverage = atof(buf);
 	sstr>>buf;
 	length = atoi(buf);
