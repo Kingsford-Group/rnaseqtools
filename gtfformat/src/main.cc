@@ -5,6 +5,7 @@
 #include <iostream>
 
 #include "genome.h"
+#include "genome1.h"
 
 using namespace std;
 
@@ -17,6 +18,7 @@ int main(int argc, const char **argv)
 		cout<<"       " << argv[0] << " FPKM2TPM <in-gtf-file> <out-gtf-file>"<<endl;
 		cout<<"       " << argv[0] << " format <in-gtf-file> <out-gtf-file>"<<endl;
 		cout<<"       " << argv[0] << " filter <min-transcript-coverage> <in-gtf-file> <out-gtf-file>"<<endl;
+		cout<<"       " << argv[0] << " clean <in-gtf-file> <out-gtf-file>"<<endl;
 		return 0;
 	}
 
@@ -37,6 +39,13 @@ int main(int argc, const char **argv)
 	if(string(argv[1]) == "format")
 	{
 		genome gm(argv[2]);
+		gm.write(argv[3]);
+	}
+
+	if(string(argv[1]) == "clean")
+	{
+		genome1 gm(argv[2]);
+		gm.remove_redundancy();
 		gm.write(argv[3]);
 	}
 
