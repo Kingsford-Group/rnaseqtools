@@ -25,6 +25,7 @@ int main(int argc, const char **argv)
 		cout<<"       " <<argv[0] << " split <cuff.tmap> <pred-gtf-file> <true-file> <false-file>"<<endl;
 		cout<<"       " <<argv[0] << " match-precision <cuff.tmap> <ref-size> <balanced-precision>"<<endl;
 		cout<<"       " <<argv[0] << " match-sensitivity <cuff.tmap> <ref-size> <balanced-sensitivity>"<<endl;
+		cout<<"       " <<argv[0] << " match-correct <cuff.tmap> <ref-size> <balanced-correct>"<<endl;
 		return 0;
 	}
 
@@ -54,6 +55,13 @@ int main(int argc, const char **argv)
 		assert(argc == 5);
 		gtfcuff cuff(argv[2]);
 		cuff.match_sensitivity(atoi(argv[3]), atof(argv[4]));
+	}
+
+	if(string(argv[1]) == "match-correct")
+	{
+		assert(argc == 5);
+		gtfcuff cuff(argv[2]);
+		cuff.match_correct(atoi(argv[3]), atoi(argv[4]));
 	}
 
 	if(string(argv[1]) == "roc-trunc")
