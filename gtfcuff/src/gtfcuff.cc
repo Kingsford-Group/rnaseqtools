@@ -362,6 +362,24 @@ int gtfcuff::acc(int refsize)
 	return 0;
 }
 
+int gtfcuff::compute_single_accuracy()
+{
+	if(items.size() == 0) return 0;
+
+	int total = 0;
+	int correct = 0;
+	for(int i = 0; i < items.size(); i++)
+	{
+		if(items[i].num_exons != 1) continue;
+		total++;
+		if(items[i].code == '=') correct++;
+	}
+
+	double pre = correct * 100.0 / total;
+	printf("SINGLE: reference = NA prediction = %d correct = %d sensitivity = NA precision = %.2lf\n", total, correct, pre);
+	return 0;
+}
+
 int gtfcuff::acc_quant(const string &qfile, double tpm_threshold)
 {
 	read_quant(qfile);

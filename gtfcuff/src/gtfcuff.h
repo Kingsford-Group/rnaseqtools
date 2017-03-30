@@ -36,6 +36,7 @@ public:
 
 	int roc(int refsize);
 	int acc(int refsize);
+	int compute_single_accuracy();
 	int match_precision(int refsize, double precision);
 	int match_sensitivity(int refsize, double sensitivity);
 	int match_correct(int refsize, int mcorrect);

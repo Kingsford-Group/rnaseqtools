@@ -19,6 +19,7 @@ public:
 	string ref_transcript_id;
 	string gene_id;
 	string transcript_id;
+	int num_exons;
 	char code;
 	int length;
 	double coverage;

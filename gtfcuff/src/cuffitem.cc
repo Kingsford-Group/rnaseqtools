@@ -28,7 +28,8 @@ int cuffitem::parse(const string &s)
 	gene_id.assign(buf);
 	sstr>>buf;
 	transcript_id.assign(buf);
-	sstr>>buf>>buf>>buf>>buf;
+	sstr>>num_exons;
+	sstr>>buf>>buf>>buf;
 	coverage = atof(buf);
 	sstr>>buf;
 	length = atoi(buf);
@@ -37,7 +38,8 @@ int cuffitem::parse(const string &s)
 
 int cuffitem::print(int n, char c) const
 {
-	printf("%s %s %s %s %c %.3lf %d %d %c\n", ref_gene_id.c_str(), ref_transcript_id.c_str(), transcript_id.c_str(), gene_id.c_str(), code, coverage, length, n, c);
+	printf("%s %s %s %s %c %d %.3lf %d %d %c\n", ref_gene_id.c_str(), ref_transcript_id.c_str(), transcript_id.c_str(), gene_id.c_str(), code, 
+			num_exons, coverage, length, n, c);
 	return 0;
 }
 
