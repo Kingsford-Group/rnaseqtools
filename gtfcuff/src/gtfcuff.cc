@@ -181,7 +181,7 @@ int gtfcuff::roc_trunc(int refsize, double min_coverage, double max_coverage)
 	return 0;
 }
 
-int gtfcuff::balance(int refsize, double precision)
+int gtfcuff::match_precision(int refsize, double precision)
 {
 	if(items.size() == 0) return 0;
 
@@ -201,6 +201,38 @@ int gtfcuff::balance(int refsize, double precision)
 		double pre = correct * 100.0 / (vt.size() - i);
 
 		if(pre >= precision)
+		{
+			printf("BALANCE: reference = %d prediction = %lu correct = %d sensitivity = %.2lf precision = %.2lf | coverage = %.3lf, length = %d\n",
+				refsize, vt.size() - i, correct, sen, pre, vt[i].coverage, vt[i].length);
+			return 0;
+		}
+
+		if(vt[i].code == '=') correct--;
+	}
+	return 0;
+}
+
+int gtfcuff::match_sensitivity(int refsize, double sensitivity)
+{
+	if(items.size() == 0) return 0;
+
+	vector<cuffitem> vt = items;
+
+	sort(vt.begin(), vt.end(), cuffitem_cmp_coverage);
+
+	//for(int i = 0; i < vt.size(); i++) vt[i].print(0, 'A');
+
+	int correct = 0;
+	for(int i = 0; i < vt.size(); i++) if(vt[i].code == '=') correct++;
+
+	double sen0 = correct * 100.0 / refsize;
+	double pre0 = correct * 100.0 / items.size();
+	for(int i = 0; i < vt.size(); i++)
+	{
+		double sen = correct * 100.0 / refsize;
+		double pre = correct * 100.0 / (vt.size() - i);
+
+		if(sen <= sensitivity)
 		{
 			printf("BALANCE: reference = %d prediction = %lu correct = %d sensitivity = %.2lf precision = %.2lf | coverage = %.3lf, length = %d\n",
 				refsize, vt.size() - i, correct, sen, pre, vt[i].coverage, vt[i].length);
