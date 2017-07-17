@@ -16,10 +16,9 @@ private:
 	bam_hdr_t *hdr;
 	bam1_t *b1t;
 
-	int qcnt;		// single reads
-	int pcnt;		// paired reads
-	double qlen;	// single reads
-	double plen;	// paired reads
+	int qcnt;			// single reads
+	double qlen;		// single reads
+	vector<int> ivec;	// insert size
 
 public:
 	int solve();

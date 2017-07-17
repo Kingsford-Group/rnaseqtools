@@ -12,8 +12,6 @@ bamkit::bamkit(const string &bamfile)
     b1t = bam_init1();
 	qlen = 0;
 	qcnt = 0;
-	plen = 0;
-	pcnt = 0;
 }
 
 bamkit::~bamkit()
@@ -25,6 +23,9 @@ bamkit::~bamkit()
 
 int bamkit::solve()
 {
+	int maxisize = 500;
+	ivec.clear();
+	ivec.assign(maxisize, 0);
     while(sam_read1(sfn, hdr, b1t) >= 0)
 	{
 		bam1_core_t &p = b1t->core;
@@ -40,13 +41,28 @@ int bamkit::solve()
 		qlen += ht.qlen;
 		qcnt += 1;
 
-		if(ht.isize <= 0) continue;
+		if(ht.isize <= 0 || ht.isize >= maxisize) continue;
 
-		plen += ht.isize;
-		pcnt += 1;
+		ivec[ht.isize]++;
 	}
 
-	printf("aligned reads = %d aligned base pair = %.0lf alignment segments = %d total insert size = %.0lf\n", qcnt, qlen, pcnt, plen);
+	int icnt = 0;
+	double iave = 0;
+	double idev = 0;
+	for(int i = 1; i < ivec.size(); i++)
+	{
+		icnt += ivec[i];
+		iave += ivec[i] * i;
+	}
+	iave = iave / icnt;
+
+	for(int i = 1; i < ivec.size(); i++)
+	{
+		idev += (i - iave) * (i - iave) * ivec[i];
+	}
+	idev = idev / icnt;
+
+	printf("aligned reads = %d aligned base pair = %.0lf insert size = %.3lf +- %.3lf\n", qcnt, qlen, iave, idev);
 
 	return 0;
 }
