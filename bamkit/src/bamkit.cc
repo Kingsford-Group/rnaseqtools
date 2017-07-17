@@ -60,9 +60,9 @@ int bamkit::solve()
 	{
 		idev += (i - iave) * (i - iave) * ivec[i];
 	}
-	idev = idev / icnt;
+	idev = sqrt(idev / icnt);
 
-	printf("aligned reads = %d aligned base pair = %.0lf insert size = %.3lf +- %.3lf\n", qcnt, qlen, iave, idev);
+	printf("aligned reads = %d aligned base pair = %.0lf average read length = %.2lf insert size = %.2lf +- %.2lf\n", qcnt, qlen, qlen / qcnt, iave, idev);
 
 	return 0;
 }
