@@ -1,6 +1,6 @@
 #!/bin/bash
  
-libs="bamkit gtfcompare gtfformat gtfsimulator gtfcuff gtfmerge gtfquant"
+libs="gtfcompare gtfformat gtfsimulator gtfcuff gtfmerge gtfquant"
 dir=`pwd`
 
 for i in `echo $libs`
