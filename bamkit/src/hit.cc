@@ -31,31 +31,20 @@ hit::hit(const hit &h)
 	hi = h.hi;
 	nm = h.nm;
 	memcpy(cigar, h.cigar, sizeof cigar);
-	//for(int i = 0; i < MAX_NUM_CIGAR; i++) cigar[i] = h.cigar[i];
 }
 
-hit::hit(bam1_t *b)
+hit::hit(bam1_t *b, int depth)
 	:bam1_core_t(b->core)
 {
-	// compute rpos
+	if(depth <= 0) return;
+
+	// compute rpos, depth = 1
 	rpos = pos + (int32_t)bam_cigar2rlen(n_cigar, bam_get_cigar(b));
 	qlen = (int32_t)bam_cigar2qlen(n_cigar, bam_get_cigar(b));
-
-	// TODO
-	return;
-
-	// fetch query name
-	char buf[1024];
-	memcpy(buf, bam_get_qname(b), l_qname);
-	buf[l_qname] = '\0';
-	qname = string(buf);
-
-	// copy cigar
-	assert(n_cigar <= MAX_NUM_CIGAR);
-	assert(n_cigar >= 1);
-	memcpy(cigar, bam_get_cigar(b), 4 * n_cigar);
+	if(depth <= 1) return;
 
 	// get concordance
+	strand = '.';
 	bool concordant = false;
 	if((flag & 0x10) <= 0 && (flag & 0x20) >= 1 && (flag & 0x40) >= 1 && (flag & 0x80) <= 0) concordant = true;		// F1R2
 	if((flag & 0x10) >= 1 && (flag & 0x20) <= 0 && (flag & 0x40) >= 1 && (flag & 0x80) <= 0) concordant = true;		// R1F2
@@ -63,7 +52,6 @@ hit::hit(bam1_t *b)
 	if((flag & 0x10) >= 1 && (flag & 0x20) <= 0 && (flag & 0x40) <= 0 && (flag & 0x80) >= 1) concordant = true;		// R2F1
 
 	// get strandness
-	strand = '.';
 	if(library_type == FR_FIRST && ((flag & 0x8) <= 0))
 	{
 		if((flag & 0x10) <= 0 && (flag & 0x20) >= 1 && (flag & 0x40) >= 1 && (flag & 0x80) <= 0) strand = '-';		// F1R2
@@ -71,7 +59,6 @@ hit::hit(bam1_t *b)
 		if((flag & 0x10) <= 0 && (flag & 0x20) >= 1 && (flag & 0x40) <= 0 && (flag & 0x80) >= 1) strand = '+';		// F2R1
 		if((flag & 0x10) >= 1 && (flag & 0x20) <= 0 && (flag & 0x40) <= 0 && (flag & 0x80) >= 1) strand = '-';		// R2F1
 	}
-
 	if(library_type == FR_SECOND && ((flag & 0x8) <= 0))
 	{
 		if((flag & 0x10) <= 0 && (flag & 0x20) >= 1 && (flag & 0x40) >= 1 && (flag & 0x80) <= 0) strand = '+';		// F1R2
@@ -79,6 +66,7 @@ hit::hit(bam1_t *b)
 		if((flag & 0x10) <= 0 && (flag & 0x20) >= 1 && (flag & 0x40) <= 0 && (flag & 0x80) >= 1) strand = '-';		// F2R1
 		if((flag & 0x10) >= 1 && (flag & 0x20) <= 0 && (flag & 0x40) <= 0 && (flag & 0x80) >= 1) strand = '+';		// R2F1
 	}
+	if(depth <= 2) return;
 
 	xs = '.';
 	uint8_t *p1 = bam_aux_get(b, "XS");
@@ -87,6 +75,7 @@ hit::hit(bam1_t *b)
 	// if mate pair is unmapped, trust XS
 	if(library_type == FR_FIRST && (flag & 0x8) >= 1) strand = xs;
 	if(library_type == FR_SECOND && (flag & 0x8) >= 1) strand = xs;
+	if(depth <= 3) return;
 
 	// fetch tags
 	hi = -1;
@@ -104,7 +93,22 @@ hit::hit(bam1_t *b)
 	uint8_t *p5 = bam_aux_get(b, "NM");
 	if(p5 && (*p5) == 'C') nm = bam_aux2i(p5);
 
+	if(depth <= 4) return;
+
+	// copy cigar
+	assert(n_cigar <= MAX_NUM_CIGAR);
+	assert(n_cigar >= 1);
+	memcpy(cigar, bam_get_cigar(b), 4 * n_cigar);
+
+	// fetch query name
+	char buf[1024];
+	memcpy(buf, bam_get_qname(b), l_qname);
+	buf[l_qname] = '\0';
+	qname = string(buf);
+	if(depth <= 5) return;
+
 	build_splice_positions();
+	if(depth <= 6) return;
 }
 
 bool hit::verify_junctions()

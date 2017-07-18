@@ -21,14 +21,25 @@ int main(int argc, const char **argv)
 {
 	srand(time(0));
 
-	if(argc != 2)
+	if(argc != 3)
 	{
-		printf("usage: %s <bam-file>\n", argv[0]);
+		printf("usage: \n");
+		printf(" %s count <bam-file>\n", argv[0]);
+		printf(" %s strand <bam-file>\n", argv[0]);
 		return 0;
 	}
 
-	bamkit bk(argv[1]);
-	bk.solve();
+	if(string(argv[1]) == "count")
+	{
+		bamkit bk(argv[1]);
+		bk.solve_count();
+	}
+
+	if(string(argv[1]) == "strand")
+	{
+		bamkit bk(argv[2]);
+		bk.solve_strand();
+	}
 
 	return 0;
 }

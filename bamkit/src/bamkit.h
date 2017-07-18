@@ -21,7 +21,8 @@ private:
 	vector<int> ivec;	// insert size
 
 public:
-	int solve();
+	int solve_count();
+	int solve_strand();
 
 };
 

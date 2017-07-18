@@ -39,8 +39,8 @@ class hit: public bam1_core_t
 {
 public:
 	hit(int32_t p);
-	hit(bam1_t *b);
 	hit(const hit &h);
+	hit(bam1_t *b, int depth);
 	bool operator<(const hit &h) const;
 
 public:

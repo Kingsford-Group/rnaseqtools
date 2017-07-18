@@ -21,7 +21,7 @@ bamkit::~bamkit()
     sam_close(sfn);
 }
 
-int bamkit::solve()
+int bamkit::solve_count()
 {
 	int maxisize = 500;
 	ivec.clear();
@@ -36,7 +36,7 @@ int bamkit::solve()
 		if(p.qual < min_mapping_quality) continue;								// ignore hits with small quality
 		if(p.n_cigar < 1) continue;												// should never happen
 
-		hit ht(b1t);
+		hit ht(b1t, 1);
 
 		qlen += ht.qlen;
 		qcnt += 1;
@@ -64,5 +64,44 @@ int bamkit::solve()
 
 	printf("aligned reads = %d aligned base pair = %.0lf average read length = %.2lf insert size = %.2lf +- %.2lf\n", qcnt, qlen, qlen / qcnt, iave, idev);
 
+	return 0;
+}
+
+int bamkit::solve_strand()
+{
+	int first = 0;
+	int second = 0;
+	int cnt = 0;
+	int n = 100000;
+
+	library_type = FR_FIRST;
+    while(sam_read1(sfn, hdr, b1t) >= 0)
+	{
+		bam1_core_t &p = b1t->core;
+
+		if((p.flag & 0x4) >= 1) continue;			// read is not mapped
+		if((p.flag & 0x8) >= 1) continue;			// mate is note mapped
+		if((p.flag & 0x100) >= 1) continue;			// secondary alignment
+		if(p.n_cigar > MAX_NUM_CIGAR) continue;
+
+		hit ht(b1t, 6);
+		if(ht.xs == '.') continue;
+
+		if(ht.strand == '+' && ht.xs == '+') first++;
+		if(ht.strand == '-' && ht.xs == '-') first++;
+		if(ht.strand == '+' && ht.xs == '-') second++;
+		if(ht.strand == '-' && ht.xs == '+') second++;
+		
+		//printf("xs = %c, strand = %c\n", ht.xs, ht.strand);
+
+		cnt++;
+		if(cnt >= n) break;
+	}
+
+	string type = "unstranded";
+	if(cnt >= 0.8 * n && first >= 0.8 * cnt) type = "first";
+	if(cnt >= 0.8 * n && second >= 0.8 * cnt) type = "second";
+
+	printf("samples = %d, first = %d, second = %d, library = %s\n", cnt, first, second, type.c_str());
 	return 0;
 }
