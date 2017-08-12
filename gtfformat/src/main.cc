@@ -17,8 +17,9 @@ int main(int argc, const char **argv)
 		cout<<"       " << argv[0] << " RPKM2TPM <in-gtf-file> <out-gtf-file>"<<endl;
 		cout<<"       " << argv[0] << " FPKM2TPM <in-gtf-file> <out-gtf-file>"<<endl;
 		cout<<"       " << argv[0] << " format <in-gtf-file> <out-gtf-file>"<<endl;
+		cout<<"       " << argv[0] << " shrink <in-gtf-file> <out-gtf-file>"<<endl;
 		cout<<"       " << argv[0] << " filter <min-transcript-coverage> <in-gtf-file> <out-gtf-file>"<<endl;
-		cout<<"       " << argv[0] << " clean <in-gtf-file> <out-gtf-file>"<<endl;
+		cout<<"       " << argv[0] << " stats <in-gtf-file> <exons-bins>"<<endl;
 		return 0;
 	}
 
@@ -36,25 +37,24 @@ int main(int argc, const char **argv)
 		gm.write(argv[3]);
 	}
 
-	if(string(argv[1]) == "format")
+	if(string(argv[1]) == "shrink")
 	{
-		genome gm(argv[2]);
-		gm.write(argv[3]);
-	}
-
-	if(string(argv[1]) == "clean")
-	{
-		genome1 gm(argv[2]);
-		gm.remove_redundancy();
+		genome1 gm;
+		gm.shrink(argv[2]);
 		gm.write(argv[3]);
 	}
 
 	if(string(argv[1]) == "filter")
 	{
-		double c = atof(argv[2]);
-		genome gm(argv[3]);
-		gm.filter_low_coverage_transcripts(c);
+		genome1 gm;
+		gm.filter(argv[3], atof(argv[2]));
 		gm.write(argv[4]);
+	}
+
+	if(string(argv[1]) == "stats")
+	{
+		genome1 gm;
+		gm.stats(argv[2], atoi(argv[3]));
 	}
 
     return 0;

@@ -14,10 +14,11 @@ class genome1
 {
 public:
 	genome1();
-	genome1(const string &file);
 
 public:
 	vector<transcript> transcripts;
+
+private:
 	MPIS intron_index;	
 
 public:
@@ -26,15 +27,19 @@ public:
 	int print(int index);
 	int write(const string &file);
 	int compare(const genome1 &gy);
-	int remove_redundancy();
+	int shrink(const string &file);
+	int filter(const string &file, double c);
+	int stats(const string &file, int n);
 
 private:
 	int build_multiexon_transcripts(const string &file);
+	int build_all_transcripts(const string &file);
 	int build_intron_index();
 	int query(const transcript &t, const set<int> &fb);
 	int query(const transcript &t, int min_index);
 };
 
-bool transcript_cmp(const transcript &x, const transcript &y);
+bool transcript_cmp_coverage(const transcript &x, const transcript &y);
+bool transcript_cmp_intron_chain(const transcript &x, const transcript &y);
 
 #endif

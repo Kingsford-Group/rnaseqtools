@@ -7,23 +7,25 @@
 genome1::genome1()
 {}
 
-genome1::genome1(const string &file)
-{
-	build(file);
-}
-
-int genome1::build(const string &file)
-{
-	build_multiexon_transcripts(file);
-	sort(transcripts.begin(), transcripts.end(), transcript_cmp);
-	build_intron_index();
-	return 0;
-}
-
 int genome1::clear()
 {
 	transcripts.clear();
 	intron_index.clear();
+	return 0;
+}
+
+int genome1::build_all_transcripts(const string &file)
+{
+	genome gm(file);
+	for(int i = 0; i < gm.genes.size(); i++)
+	{
+		const gene &g = gm.genes[i];
+		for(int k = 0; k < g.transcripts.size(); k++)
+		{
+			const transcript &t = g.transcripts[k];
+			transcripts.push_back(t);
+		}
+	}
 	return 0;
 }
 
@@ -109,26 +111,50 @@ int genome1::query(const transcript &t, int min_index)
 	return -1;
 }
 
-int genome1::remove_redundancy()
+int genome1::shrink(const string &file)
 {
-	set<int> rd;
-	for(int i = transcripts.size() - 1; i >= 0; i--)
+	map<int, int> mm;
+	vector<transcript> vv;
+	build_multiexon_transcripts(file);
+	int n = transcripts.size();
+	if(n <= 0) return 0;
+
+	sort(transcripts.begin(), transcripts.end(), transcript_cmp_intron_chain);
+
+	vv.push_back(transcripts[0]);
+
+	int c = 1;
+	for(int k = 1; k < n; k++)
 	{
-		transcript &t = transcripts[i];	
-		int k = query(t, i + 1);
-		if(k == -1) continue;
-		rd.insert(i);
+		bool b = transcripts[k].intron_chain_match(transcripts[k - 1]);
+		if(b == true) c++;
+		if(b == true) continue;
+
+		vv.push_back(transcripts[k]);
+		if(mm.find(c) == mm.end()) mm.insert(PII(c, 1));
+		else mm[c]++;
+		c = 1;
 	}
 
-	vector<transcript> v;
-	for(int i = 1; i < transcripts.size(); i++)
+	for(MII::iterator it = mm.begin(); it != mm.end(); it++)
 	{
-		if(rd.find(i) != rd.end()) continue;
-		transcript &t = transcripts[i];	
-		v.push_back(t);
+		printf("size %d : %d groups (by identifical intron-chain)\n", it->first, it->second);
 	}
-	transcripts = v;
-	build_intron_index();
+
+	transcripts = vv;
+	return 0;
+}
+
+int genome1::filter(const string &file, double c)
+{
+	build_multiexon_transcripts(file);
+	vector<transcript> vv;
+	for(int i = 0; i < transcripts.size(); i++)
+	{
+		if(transcripts[i].coverage < c) continue;
+		vv.push_back(transcripts[i]);
+	}
+	transcripts = vv;
 	return 0;
 }
 
@@ -170,6 +196,45 @@ int genome1::compare(const genome1 &gy)
 	return 0;
 }
 
+int genome1::stats(const string &file, int n)
+{
+	build_all_transcripts(file);
+	vector<int> counts;
+	vector<int> length;
+	counts.assign(n, 0);
+	length.assign(n, 0);
+	for(int i = 0; i < transcripts.size(); i++)
+	{
+		transcript &t = transcripts[i];
+		int k = t.exons.size();
+		int l = t.length();
+		if(k >= n) k = n;
+		counts[k - 1] ++;
+		length[k - 1] += l;
+	}
+
+	for(int k = 0; k < n; k++)
+	{
+		printf("transcripts with %d exons: %d\n", k + 1, counts[k]);
+	}
+
+	/*
+	for(int k = 0; k < n; k++)
+	{
+		double ave = -1;
+		if(counts[k] >= 1) ave = length[k] * 1.0 / counts[k];
+	}
+
+	for(int k = 0; k < n; k++)
+	{
+		if(counts[k] == 0) printf("0.0 ");
+		else printf("%.2lf ", length[k] * 1.0 / counts[k]);
+	}
+	*/
+
+	return 0;
+}
+
 int genome1::print(int index)
 {
 	printf("genome %d: %lu transcripts, %lu distinct first intron\n", index, transcripts.size(), intron_index.size());
@@ -187,8 +252,42 @@ int genome1::write(const string &file)
 	return 0;
 }
 
-bool transcript_cmp(const transcript &x, const transcript &y)
+bool transcript_cmp_coverage(const transcript &x, const transcript &y)
 {
 	if(x.coverage < y.coverage) return true;
+	else return false;
+}
+
+bool transcript_cmp_intron_chain(const transcript &x, const transcript &y)
+{
+	if(x.strand < y.strand) return true;
+	if(x.strand > y.strand) return false;
+	if(x.seqname < y.seqname) return true;
+	if(x.seqname > y.seqname) return false;
+	if(x.exons.size() < y.exons.size()) return true;
+	if(x.exons.size() > y.exons.size()) return false;
+
+	int n = x.exons.size() - 1;
+	if(n >= 0 && x.exons[0].second < y.exons[0].second) return true;
+	if(n >= 0 && x.exons[0].second > y.exons[0].second) return false;
+	if(n >= 0 && x.exons[n].first < y.exons[n].first) return true;
+	if(n >= 0 && x.exons[n].first > y.exons[n].first) return false;
+
+	for(int k = 1; k < n - 1; k++)
+	{
+		int32_t x1 = x.exons[k].first;
+		int32_t y1 = y.exons[k].first;
+		int32_t x2 = x.exons[k].second;
+		int32_t y2 = y.exons[k].second;
+		if(x1 < y1) return true;
+		if(x1 > y1) return false;
+		if(x2 < y2) return true;
+		if(x2 > y2) return false;
+	}
+	if(x.length() > y.length()) return true;
+	if(x.length() < y.length()) return false;
+	if(x.get_bounds().first < y.get_bounds().first) return true;
+	if(x.get_bounds().first > y.get_bounds().first) return false;
+	if(x.transcript_id.compare(y.transcript_id) < 0) return true;
 	else return false;
 }
