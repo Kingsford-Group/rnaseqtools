@@ -16,12 +16,15 @@ int gtfmerge::add_genomes(const string &file)
 	if(fin.fail()) return 0;
 
 	string line;
+	int cnt = 0;
 	while(getline(fin, line))
 	{
 		if(line == "") continue;
 		add_genome(line);
-		cout << "add genome " << line.c_str() << endl << flush;
+		cout << "add genome " << ++cnt << " " << line.c_str() << endl << flush;
 	}
+
+	fin.close();
 	return 0;
 }
 

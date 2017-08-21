@@ -5,10 +5,8 @@
 
 using namespace std;
 
-typedef pair<PI32, set<int> > PPIS;
-typedef map<PI32, set<int> > MPIS;
-typedef pair<int, int> PII;
-typedef map<int, int> MII;
+typedef pair<string, int> PSI;
+typedef map<string, int> MSI;
 
 class genome1
 {
@@ -18,25 +16,25 @@ public:
 
 public:
 	vector<transcript> transcripts;
-	MPIS intron_index;	
+	MSI intron_hashing;
 
 public:
+	int add_transcript(const transcript &t);
 	int build(const string &file);
 	int build(const vector<transcript> &v);
 	int build_union(const genome1 &gm);
 	int build_intersection(const genome1 &gm, genome1 &out);
 	int clear();
-	int print(int index);
 	int write(const string &file);
 	int add_suffix(const string &p);
 	int remove_redundancy();
+	int print(int index);
+	int print_hashing();
 
 private:
 	int build_multiexon_transcripts(const string &file);
-	int build_intron_index();
-	int query(const transcript &t, const set<int> &fb);
-	int query(const transcript &t, int max_index);
-	int compare(const genome1 &gy, MII &x2y, MII &y2x);
 };
+
+string compute_intron_hashing(const transcript &t);
 
 #endif

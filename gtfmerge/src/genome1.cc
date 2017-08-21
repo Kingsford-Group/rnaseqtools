@@ -13,27 +13,7 @@ genome1::genome1(const string &file)
 
 int genome1::build(const string &file)
 {
-	build_multiexon_transcripts(file);
-	build_intron_index();
-	return 0;
-}
-
-int genome1::build(const vector<transcript> &v)
-{
-	transcripts = v;
-	build_intron_index();
-	return 0;
-}
-
-int genome1::clear()
-{
-	transcripts.clear();
-	intron_index.clear();
-	return 0;
-}
-
-int genome1::build_multiexon_transcripts(const string &file)
-{
+	clear();
 	genome gm(file);
 	for(int i = 0; i < gm.genes.size(); i++)
 	{
@@ -42,161 +22,70 @@ int genome1::build_multiexon_transcripts(const string &file)
 		{
 			const transcript &t = g.transcripts[k];
 			if(t.exons.size() <= 1) continue;
-			transcripts.push_back(t);
+			add_transcript(t);
 		}
 	}
 	return 0;
 }
 
-int genome1::build_intron_index()
+int genome1::build(const vector<transcript> &v)
 {
-	intron_index.clear();
-	for(int i = 0; i < transcripts.size(); i++)
+	clear();
+	for(int i = 0; i < v.size(); i++)
 	{
-		transcript &t = transcripts[i];
-		assert(t.exons.size() >= 2);
-		PI32 p = t.get_first_intron();
-		if(intron_index.find(p) == intron_index.end()) 
-		{
-			set<int> s;
-			s.insert(i);
-			intron_index.insert(PPIS(p, s));
-		}
-		else
-		{
-			intron_index[p].insert(i);
-		}
+		add_transcript(v[i]);
 	}
 	return 0;
 }
 
-int genome1::query(const transcript &t, const set<int> &fb)
+int genome1::clear()
 {
-	if(t.exons.size() <= 1) return -1;
-	PI32 p = t.get_first_intron();
-	if(intron_index.find(p) == intron_index.end()) return -1;
-	set<int> s = intron_index[p];
-	for(set<int>::iterator it = s.begin(); it != s.end(); it++)
-	{
-		int k = (*it);
-		transcript &x = transcripts[k];
-		if(x.strand != t.strand) continue;
-		if(x.seqname != t.seqname) continue;
-		if(x.exons.size() != t.exons.size()) continue;
-		if(x.intron_chain_match(t) == false) continue;
-		if(fb.find(k) != fb.end()) continue;
-		return k;
-	}
-	return -1;
-}
-
-int genome1::query(const transcript &t, int max_index)
-{
-	if(t.exons.size() <= 1) return -1;
-	PI32 p = t.get_first_intron();
-	if(intron_index.find(p) == intron_index.end()) return -1;
-	set<int> s = intron_index[p];
-	for(set<int>::iterator it = s.begin(); it != s.end(); it++)
-	{
-		int k = (*it);
-		if(k > max_index) continue;
-		transcript &x = transcripts[k];
-		if(x.strand != t.strand) continue;
-		if(x.seqname != t.seqname) continue;
-		if(x.exons.size() != t.exons.size()) continue;
-		if(x.intron_chain_match(t) == false) continue;
-		return k;
-	}
-	return -1;
-}
-
-int genome1::compare(const genome1 &gy, MII &x2y, MII &y2x)
-{
-	x2y.clear();
-	y2x.clear();
-	set<int> fb;
-	for(int i = 0; i < gy.transcripts.size(); i++)
-	{
-		const transcript &t = gy.transcripts[i];
-		int k = query(t, fb);
-		if(k == -1) continue;
-		x2y.insert(PII(k, i));
-		y2x.insert(PII(i, k));
-		fb.insert(k);
-	}
+	transcripts.clear();
+	intron_hashing.clear();
 	return 0;
 }
 
-int genome1::remove_redundancy()
+int genome1::add_transcript(const transcript &t)
 {
-	set<int> rd;
-	for(int i = 1; i < transcripts.size(); i++)
+	string s = compute_intron_hashing(t);
+	if(intron_hashing.find(s) == intron_hashing.end())
 	{
-		transcript &t = transcripts[i];	
-		int k = query(t, i - 1);
-		if(k == -1) continue;
-		rd.insert(i);
+		intron_hashing.insert(PSI(s, transcripts.size()));
+		transcripts.push_back(t);
 	}
-
-	vector<transcript> v;
-	for(int i = 1; i < transcripts.size(); i++)
+	else
 	{
-		if(rd.find(i) != rd.end()) continue;
-		transcript &t = transcripts[i];	
-		v.push_back(t);
+		int k = intron_hashing[s];
+		assert(k >= 0 && k < transcripts.size());
+		transcripts[k].coverage += t.coverage;
 	}
-	transcripts = v;
 	return 0;
 }
 
 int genome1::build_intersection(const genome1 &gm, genome1 &out)
 {
-	vector<transcript> vv;
-	MII x2y;
-	MII y2x;
-	compare(gm, x2y, y2x);
-	for(MII::iterator it = x2y.begin(); it != x2y.end(); it++)
-	{
-		int i = it->first;
-		int j = it->second;
-		transcript x = transcripts[i];
-		const transcript &y = gm.transcripts[j];
-		x.coverage += y.coverage;
-		x.RPKM += y.RPKM;
-		x.FPKM += y.FPKM;
-		x.TPM += y.TPM;
-		vv.push_back(x);
-	}
-
 	out.clear();
-	out.build(vv);
+	for(MSI::iterator it = intron_hashing.begin(); it != intron_hashing.end(); it++)
+	{
+		string s = it->first;
+		int k1 = it->second;
+		transcript t = transcripts[k1];
+		MSI::const_iterator x = gm.intron_hashing.find(s);
+		if(x == gm.intron_hashing.end()) continue;
+		int k2 = x->second;
+		t.coverage += gm.transcripts[k2].coverage;
+		out.add_transcript(t);
+	}
 	return 0;
 }
 
 int genome1::build_union(const genome1 &gm)
 {
-	MII x2y;
-	MII y2x;
-	compare(gm, x2y, y2x);
-	for(MII::iterator it = x2y.begin(); it != x2y.end(); it++)
+	for(int k = 0; k < gm.transcripts.size(); k++)
 	{
-		int i = it->first;
-		int j = it->second;
-		transcript &x = transcripts[i];
-		const transcript &y = gm.transcripts[j];
-		x.coverage += y.coverage;
-		x.RPKM += y.RPKM;
-		x.FPKM += y.FPKM;
-		x.TPM += y.TPM;
+		const transcript &t = gm.transcripts[k];
+		add_transcript(t);
 	}
-
-	for(int i = 0; i < gm.transcripts.size(); i++)
-	{
-		if(y2x.find(i) != y2x.end()) continue;
-		transcripts.push_back(gm.transcripts[i]);
-	}
-
-	build_intron_index();
 	return 0;
 }
 
@@ -213,7 +102,17 @@ int genome1::add_suffix(const string &p)
 
 int genome1::print(int index)
 {
-	printf("genome %d: %lu transcripts, %lu distinct first intron\n", index, transcripts.size(), intron_index.size());
+	printf("genome %d: %lu transcripts, %lu distinct first intron\n", index, transcripts.size(), intron_hashing.size());
+	return 0;
+}
+
+int genome1::print_hashing()
+{
+	for(int i = 0; i < transcripts.size(); i++)
+	{
+		string s = compute_intron_hashing(transcripts[i]);
+		printf("hash = %s\n", s.c_str());
+	}
 	return 0;
 }
 
@@ -228,4 +127,23 @@ int genome1::write(const string &file)
 		t.write(fout);
 	}
 	fout.close();
+}
+
+string compute_intron_hashing(const transcript &t)
+{
+	string h = t.seqname;
+	if(t.exons.size() <= 1) return h;
+	int32_t p = t.exons[0].second;
+	h.append(to_string(p));
+
+	for(int k = 1; k < t.exons.size(); k++)
+	{
+		int32_t q1 = t.exons[k].first;
+		int32_t q2 = t.exons[k].second;
+		h.append(to_string(q1 - p));
+		if(k == t.exons.size() - 1) break;
+		h.append(to_string(q2 - q1));
+		p = q2;
+	}
+	return h;
 }
