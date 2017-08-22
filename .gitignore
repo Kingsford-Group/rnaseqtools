@@ -24,3 +24,5 @@ gtfmerge/src/gtfmerge
 gtfquant/src/gtfquant
 gtfsimulator/src/gtfsimulator
 gtfalign/src/gtfalign
+
+gtfcuff/src/gtfcuff.cc.TODO
