@@ -3,6 +3,7 @@
 #include <cassert>
 #include <fstream>
 #include <algorithm>
+#include <string>
 
 genome1::genome1()
 {}
@@ -290,4 +291,23 @@ bool transcript_cmp_intron_chain(const transcript &x, const transcript &y)
 	if(x.get_bounds().first > y.get_bounds().first) return false;
 	if(x.transcript_id.compare(y.transcript_id) < 0) return true;
 	else return false;
+}
+
+string compute_intron_hashing(const transcript &t)
+{
+	string h = "0";
+	if(t.exons.size() <= 1) return h;
+	int32_t p = t.exons[0].second;
+	h.append(to_string(p));
+
+	for(int k = 1; k < t.exons.size(); k++)
+	{
+		int32_t q1 = t.exons[k].first;
+		int32_t q2 = t.exons[k].second;
+		h.append(to_string(q1 - p));
+		if(k == t.exons.size() - 1) break;
+		h.append(to_string(q2 - q1));
+		p = q2;
+	}
+	return h;
 }
