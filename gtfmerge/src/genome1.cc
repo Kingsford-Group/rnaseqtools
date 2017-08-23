@@ -20,8 +20,9 @@ int genome1::build(const string &file)
 		const gene &g = gm.genes[i];
 		for(int k = 0; k < g.transcripts.size(); k++)
 		{
-			const transcript &t = g.transcripts[k];
+			transcript t = g.transcripts[k];
 			if(t.exons.size() <= 1) continue;
+			if(merge_coverage_as_counts == true) t.coverage = 1.0;
 			add_transcript(t);
 		}
 	}

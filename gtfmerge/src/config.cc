@@ -9,6 +9,7 @@
 using namespace std;
 
 double min_transcript_coverage = -1;
+bool merge_coverage_as_counts = false;
 
 int parse_parameters(int argc, const char ** argv)
 {
@@ -20,5 +21,14 @@ int parse_parameters(int argc, const char ** argv)
 			i++;
 		}
 	}
+
+	for(int i = 1; i < argc; i++)
+	{
+		if(string(argv[i]) == "-n")
+		{
+			merge_coverage_as_counts = true;
+		}
+	}
+
 	return 0;
 }
