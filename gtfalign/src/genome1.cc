@@ -6,11 +6,6 @@
 genome1::genome1()
 {}
 
-genome1::genome1(const string &file)
-{
-	build(file);
-}
-
 int genome1::build(const string &file)
 {
 	clear();
@@ -28,63 +23,92 @@ int genome1::build(const string &file)
 	return 0;
 }
 
-int genome1::build(const vector<transcript> &v)
+int genome1::clear()
 {
-	clear();
-	for(int i = 0; i < v.size(); i++)
+	transcripts.clear();
+	chain_hashing.clear();
+	return 0;
+}
+
+int genome1::compare_boundary(const genome1 &gm)
+{
+	for(MSID::iterator it = mboundary.begin(); it != mboundary.end(); it++)
 	{
-		add_transcript(v[i]);
+		string chrm = it->first;
+		MSID::const_iterator it2 = gm.mboundary.find(chrm);
+
+		if(it2 == gm.mboundary.end()) continue;
+
+		compare_boundary(chrm, it->second, it2->second);
 	}
 	return 0;
 }
 
-int genome1::clear()
+int genome1::compare_boundary(string chrm, const MID32 &mx, const MID32 &my)
 {
-	transcripts.clear();
-	intron_hashing.clear();
 	return 0;
 }
 
 int genome1::add_transcript(const transcript &t)
 {
-	string s = compute_intron_hashing(t);
-	if(intron_hashing.find(s) == intron_hashing.end())
+	if(t.exons.size() <= 1) return 0;
+
+	// add boundaries and junctions
+	vector<PI32> chain = t.get_intron_chain();
+	for(int k = 0; k < chain.size(); k++)
 	{
-		intron_hashing.insert(PSI(s, transcripts.size()));
+		add_boundary(chain[k].first, t.seqname, t.coverage);
+		add_boundary(chain[k].second, t.seqname, t.coverage);
+		add_junction(chain[k], t.seqname, t.coverage);
+	}
+	return 0;
+
+	// add transcript and intron hashing
+	string s = compute_chain_hashing(t);
+	if(chain_hashing.find(s) == chain_hashing.end())
+	{
+		chain_hashing.insert(PSI(s, transcripts.size()));
 		transcripts.push_back(t);
 	}
 	else
 	{
-		int k = intron_hashing[s];
+		int k = chain_hashing[s];
 		assert(k >= 0 && k < transcripts.size());
 		transcripts[k].coverage += t.coverage;
 	}
 	return 0;
 }
 
-int genome1::build_intersection(const genome1 &gm, genome1 &out)
+int genome1::add_boundary(int32_t p, string chrm, double coverage)
 {
-	out.clear();
-	for(MSI::iterator it = intron_hashing.begin(); it != intron_hashing.end(); it++)
+	if(mboundary.find(chrm) == mboundary.end())
 	{
-		string s = it->first;
-		int k1 = it->second;
-		transcript t = transcripts[k1];
-		MSI::const_iterator x = gm.intron_hashing.find(s);
-		if(x == gm.intron_hashing.end()) continue;
-		int k2 = x->second;
-		t.coverage += gm.transcripts[k2].coverage;
-		out.add_transcript(t);
+		MID32 m;
+		m.insert(PID32(p, coverage));
+		mboundary.insert(pair<string, MID32>(chrm, m));
+	}
+	else
+	{
+		MID32 &m = mboundary[chrm];
+		if(m.find(p) == m.end()) m.insert(PID32(p, coverage));
+		else m[p] += coverage;
 	}
 	return 0;
 }
 
-int genome1::build_union(const genome1 &gm)
+int genome1::add_junction(PI32 p, string chrm, double coverage)
 {
-	for(int k = 0; k < gm.transcripts.size(); k++)
+	if(mjunction.find(chrm) == mjunction.end())
 	{
-		const transcript &t = gm.transcripts[k];
-		add_transcript(t);
+		MPD32 m;
+		m.insert(PPD32(p, coverage));
+		mjunction.insert(pair<string, MPD32>(chrm, m));
+	}
+	else
+	{
+		MPD32 &m = mjunction[chrm];
+		if(m.find(p) == m.end()) m.insert(PPD32(p, coverage));
+		else m[p] += coverage;
 	}
 	return 0;
 }
@@ -102,7 +126,7 @@ int genome1::add_suffix(const string &p)
 
 int genome1::print(int index)
 {
-	printf("genome %d: %lu transcripts, %lu distinct first intron\n", index, transcripts.size(), intron_hashing.size());
+	printf("genome %d: %lu transcripts\n", index, transcripts.size());
 	return 0;
 }
 
@@ -110,7 +134,7 @@ int genome1::print_hashing()
 {
 	for(int i = 0; i < transcripts.size(); i++)
 	{
-		string s = compute_intron_hashing(transcripts[i]);
+		string s = compute_chain_hashing(transcripts[i]);
 		printf("hash = %s\n", s.c_str());
 	}
 	return 0;
@@ -129,7 +153,7 @@ int genome1::write(const string &file)
 	fout.close();
 }
 
-string compute_intron_hashing(const transcript &t)
+string compute_chain_hashing(const transcript &t)
 {
 	string h = t.seqname;
 	
