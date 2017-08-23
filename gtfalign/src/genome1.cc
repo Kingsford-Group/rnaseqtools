@@ -46,6 +46,37 @@ int genome1::compare_boundary(const genome1 &gm)
 
 int genome1::compare_boundary(string chrm, const MID32 &mx, const MID32 &my)
 {
+	for(MID32::const_iterator it = mx.begin(); it != mx.end(); it++)
+	{
+		int32_t p1 = it->first;
+		double c1 = it->second;
+
+		MID32::const_iterator it2 = my.find(p1);
+
+		if(it2 == my.end())
+		{
+			printf("type1 %s:%d %.3lf %.3lf\n", chrm.c_str(), p1, c1, 0.0);
+		}
+		else
+		{
+			double c2 = it2->second;
+			printf("type2 %s:%d %.3lf %.3lf\n", chrm.c_str(), p1, c1, c2);
+		}
+	}
+
+	for(MID32::const_iterator it2 = my.begin(); it2 != my.end(); it2++)
+	{
+		int32_t p2 = it2->first;
+		double c2 = it2->second;
+
+		MID32::const_iterator it = mx.find(p2);
+
+		if(it == mx.end())
+		{
+			printf("type3 %s:%d coverage = (%.3lf, %.3lf)\n", chrm.c_str(), p2, 0.0, c2);
+		}
+	}
+
 	return 0;
 }
 
