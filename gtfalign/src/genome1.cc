@@ -73,7 +73,7 @@ int genome1::compare_boundary(string chrm, const MID32 &mx, const MID32 &my)
 
 		if(it == mx.end())
 		{
-			printf("type3 %s:%d coverage = (%.3lf, %.3lf)\n", chrm.c_str(), p2, 0.0, c2);
+			printf("type3 %s:%d %.3lf %.3lf\n", chrm.c_str(), p2, 0.0, c2);
 		}
 	}
 
@@ -123,7 +123,7 @@ int genome1::compare_junction(string chrm, const MPD32 &mx, const MPD32 &my)
 
 		if(it == mx.end())
 		{
-			printf("type3 %s:%d-%d coverage = (%.3lf, %.3lf)\n", chrm.c_str(), p2.first, p2.second, 0.0, c2);
+			printf("type3 %s:%d-%d %.3lf %.3lf\n", chrm.c_str(), p2.first, p2.second, 0.0, c2);
 		}
 	}
 
