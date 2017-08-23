@@ -44,6 +44,7 @@ private:
 	int add_boundary(int32_t p, string chrm, double coverage);
 	int add_junction(PI32 p, string chrm, double coverage);
 	int compare_boundary(string, const MID32&, const MID32&);
+	int compare_junction(string, const MPD32&, const MPD32&);
 };
 
 string compute_chain_hashing(const transcript &t);

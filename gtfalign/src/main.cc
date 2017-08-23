@@ -15,6 +15,7 @@ int main(int argc, const char **argv)
 	if(argc == 1)
 	{
 		cout<<"usage: "<<argv[0]<< " boundary <gtf-file1> <gtf-file2> [options]"<<endl;
+		cout<<"usage: "<<argv[0]<< " junction <gtf-file1> <gtf-file2> [options]"<<endl;
 		return 0;
 	}
 
@@ -30,6 +31,19 @@ int main(int argc, const char **argv)
 
 		g1.compare_boundary(g2);
 	}
+
+
+	if(string(argv[1]) == "junction")
+	{
+		genome1 g1;
+		genome1 g2;
+
+		g1.build(argv[2]);
+		g2.build(argv[3]);
+
+		g1.compare_junction(g2);
+	}
+
 
     return 0;
 }

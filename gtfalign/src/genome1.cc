@@ -80,6 +80,57 @@ int genome1::compare_boundary(string chrm, const MID32 &mx, const MID32 &my)
 	return 0;
 }
 
+int genome1::compare_junction(const genome1 &gm)
+{
+	for(MSPD::iterator it = mjunction.begin(); it != mjunction.end(); it++)
+	{
+		string chrm = it->first;
+		MSPD::const_iterator it2 = gm.mjunction.find(chrm);
+
+		if(it2 == gm.mjunction.end()) continue;
+
+		compare_junction(chrm, it->second, it2->second);
+	}
+	return 0;
+}
+
+int genome1::compare_junction(string chrm, const MPD32 &mx, const MPD32 &my)
+{
+	for(MPD32::const_iterator it = mx.begin(); it != mx.end(); it++)
+	{
+		PI32 p1 = it->first;
+		double c1 = it->second;
+
+		MPD32::const_iterator it2 = my.find(p1);
+
+		if(it2 == my.end())
+		{
+			printf("type1 %s:%d-%d %.3lf %.3lf\n", chrm.c_str(), p1.first, p1.second, c1, 0.0);
+		}
+		else
+		{
+			double c2 = it2->second;
+			printf("type2 %s:%d-%d %.3lf %.3lf\n", chrm.c_str(), p1.first, p1.second, c1, c2);
+		}
+	}
+
+	for(MPD32::const_iterator it2 = my.begin(); it2 != my.end(); it2++)
+	{
+		PI32 p2 = it2->first;
+		double c2 = it2->second;
+
+		MPD32::const_iterator it = mx.find(p2);
+
+		if(it == mx.end())
+		{
+			printf("type3 %s:%d-%d coverage = (%.3lf, %.3lf)\n", chrm.c_str(), p2.first, p2.second, 0.0, c2);
+		}
+	}
+
+	return 0;
+}
+
+
 int genome1::add_transcript(const transcript &t)
 {
 	if(t.exons.size() <= 1) return 0;
