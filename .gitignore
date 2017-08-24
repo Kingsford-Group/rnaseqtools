@@ -17,7 +17,6 @@ missing
 stamp-h1
 autom4te.cache/
 
-gtfcompare/src/gtfcompare
 gtfcuff/src/gtfcuff
 gtfformat/src/gtfformat
 gtfmerge/src/gtfmerge
