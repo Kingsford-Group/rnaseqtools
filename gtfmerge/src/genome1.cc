@@ -58,7 +58,17 @@ int genome1::add_transcript(const transcript &t)
 	{
 		int k = intron_hashing[s];
 		assert(k >= 0 && k < transcripts.size());
-		transcripts[k].coverage += t.coverage;
+		transcript tt = transcripts[k];
+		if(transcripts[k].length() > t.length()) 
+		{
+			transcripts[k].coverage += t.coverage;
+		}
+		else
+		{
+			double c = transcripts[k].coverage + t.coverage;
+			transcripts[k] = t;
+			transcripts[k].coverage = c;
+		}
 	}
 	return 0;
 }
