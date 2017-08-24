@@ -5,6 +5,9 @@
 
 using namespace std;
 
+//int do_union(const string &file, genome1 &gm);
+int do_union(const vector<string> &v, genome1 *gm);
+
 class gtfmerge
 {
 public:

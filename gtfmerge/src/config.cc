@@ -10,6 +10,7 @@ using namespace std;
 
 double min_transcript_coverage = -1;
 bool merge_coverage_as_counts = false;
+int num_threads = 1;
 
 int parse_parameters(int argc, const char ** argv)
 {
@@ -20,11 +21,12 @@ int parse_parameters(int argc, const char ** argv)
 			min_transcript_coverage = atof(argv[i + 1]);
 			i++;
 		}
-	}
-
-	for(int i = 1; i < argc; i++)
-	{
-		if(string(argv[i]) == "-n")
+		else if(string(argv[i]) == "-t")
+		{
+			num_threads = atoi(argv[i + 1]);
+			i++;
+		}
+		else if(string(argv[i]) == "-n")
 		{
 			merge_coverage_as_counts = true;
 		}
