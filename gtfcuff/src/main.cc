@@ -25,6 +25,7 @@ int main(int argc, const char **argv)
 		cout<<"       " <<argv[0] << " quant <cuff.tmap> <pred-gtf-file> <ref-gtf-file>"<<endl;
 		cout<<"       " <<argv[0] << " split <cuff.tmap> <pred-gtf-file> <true-file> <false-file>"<<endl;
 		cout<<"       " <<argv[0] << " union <cuff.tmap> <pred-gtf-file> <ref-gtf-file> <merged-file>"<<endl;
+		cout<<"       " <<argv[0] << " puniq <cuff.tmap> <pred-gtf-file> <ref-gtf-file> <puniq-file>"<<endl;
 		cout<<"       " <<argv[0] << " match-precision <cuff.tmap> <ref-size> <balanced-precision>"<<endl;
 		cout<<"       " <<argv[0] << " match-sensitivity <cuff.tmap> <ref-size> <balanced-sensitivity>"<<endl;
 		cout<<"       " <<argv[0] << " match-correct <cuff.tmap> <ref-size> <balanced-correct>"<<endl;
@@ -109,6 +110,15 @@ int main(int argc, const char **argv)
 		cuff.assign_pred(argv[3]);
 		cuff.assign_ref(argv[4]);
 		cuff.build_union(argv[5]);
+	}
+
+	if(string(argv[1]) == "puniq")
+	{
+		assert(argc == 6);
+		gtfcuff cuff(argv[2]);
+		cuff.assign_pred(argv[3]);
+		cuff.assign_ref(argv[4]);
+		cuff.build_pred_unique(argv[5]);
 	}
 
 	if(string(argv[1]) == "classify")

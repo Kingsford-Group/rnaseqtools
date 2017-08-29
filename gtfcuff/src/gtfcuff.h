@@ -45,6 +45,7 @@ public:
 	int acc_quant(const string &qfile, double tpm_threshold);
 	int split(const string &f1, const string &f2);
 	int build_union(const string &file);
+	int build_pred_unique(const string &file);
 	int classify();
 	int quant();
 };

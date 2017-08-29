@@ -156,6 +156,25 @@ int gtfcuff::build_union(const string &file)
 	return 0;
 }
 
+int gtfcuff::build_pred_unique(const string &file)
+{
+	ofstream fout(file.c_str());
+	for(int k = 0; k < vpred.size(); k++)
+	{
+		string s = vpred[k].transcript_id;
+		bool b = false;
+		if(t2i.find(s) != t2i.end())
+		{
+			if(items[t2i[s]].code == '=') b = true;
+			else b = false;
+		}
+		if(b == true) continue;
+		vpred[k].write(fout);
+	}
+	fout.close();
+	return 0;
+}
+
 int gtfcuff::roc(int refsize)
 {
 	return roc_trunc(refsize, -1, DBL_MAX);
