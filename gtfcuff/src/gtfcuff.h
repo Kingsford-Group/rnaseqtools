@@ -44,6 +44,7 @@ public:
 	int roc_quant(const string &qfile, double min_tpm, double max_tpm);
 	int acc_quant(const string &qfile, double tpm_threshold);
 	int split(const string &f1, const string &f2);
+	int build_union(const string &file);
 	int classify();
 	int quant();
 };
