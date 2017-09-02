@@ -27,8 +27,6 @@ AC_TYPE_SIZE_T
 # Checks for library functions.
 AC_CHECK_FUNCS([sqrt])
 
-bindir=$prefix
-
 AC_CONFIG_FILES([Makefile
 				 gtfalign/Makefile
                  gtfcuff/Makefile
