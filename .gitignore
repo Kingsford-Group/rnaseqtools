@@ -1,3 +1,4 @@
+*.a
 *.o
 *.Po
 *.swp
@@ -6,7 +7,6 @@ Makefile
 
 aclocal.m4
 compile
-config.h
 config.h.in
 config.log
 config.status
@@ -17,11 +17,9 @@ missing
 stamp-h1
 autom4te.cache/
 
-gtfcuff/src/gtfcuff
-gtfformat/src/gtfformat
-gtfmerge/src/gtfmerge
-gtfquant/src/gtfquant
-gtfsimulator/src/gtfsimulator
-gtfalign/src/gtfalign
-
-gtfcuff/src/gtfcuff.cc.TODO
+gtfalign/gtfalign
+gtfcuff/gtfcuff
+gtfformat/gtfformat
+gtfmerge/gtfmerge
+gtfquant/gtfquant
+gtfsimulator/gtfsimulator
