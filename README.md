@@ -3,7 +3,7 @@ This repo `rnaseqtools` provides a set of tools to process transcripts (mainly i
 download the source code from [here](https://github.com/Kingsford-Group/rnaseqtools/releases/download/v1.0.0/rnaseqtools-1.0.tar.gz),
 then use the following commands to compile:
 ```
-./configure
+./configure --prefix=/path/to/your/install/folder
 make
-make install --prefix=/path/to/your/install/folder
+make install
 ```
