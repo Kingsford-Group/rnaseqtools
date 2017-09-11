@@ -286,7 +286,6 @@ int gtfcuff::match_correct(int refsize, int mcorrect)
 	return 0;
 }
 
-
 int gtfcuff::match_sensitivity(int refsize, double sensitivity)
 {
 	if(items.size() == 0) return 0;
@@ -372,6 +371,42 @@ int gtfcuff::roc_quant(const string &qfile, double min_tpm, double max_tpm)
 
 		if(vt[i].code == '=') correct--;
 	}
+
+	return 0;
+}
+
+int gtfcuff::auc(int refsize)
+{
+	if(items.size() == 0) return 0;
+
+	sort(items.begin(), items.end(), cuffitem_cmp_coverage);
+
+	int correct = 0;
+	for(int i = 0; i < items.size(); i++) if(items[i].code == '=') correct++;
+
+	int correct0 = correct;
+	double sen0 = correct * 100.0 / refsize;
+	double pre0 = correct * 100.0 / items.size();
+	double auc = sen0 * pre0;
+	for(int i = 0; i < items.size() - 1; i++)
+	{
+		if(items[i].code == '=') correct--;
+
+		double sen = correct * 100.0 / refsize;
+		double pre = correct * 100.0 / (items.size() - i - 1);
+		
+		double area = (sen + sen0) * 0.5 * (pre - pre0);
+		auc += area;
+
+		pre0 = pre;
+		sen0 = sen;
+
+		//printf("reference = %d prediction = %lu correct = %d sensitivity = %.2lf precision = %.2lf | area = %.5lf, auc = %.5lf | coverage = %.3lf, length = %d\n",
+		//		refsize, items.size() - i, correct, sen, pre, area, auc, items[i].coverage, items[i].length);
+	}
+
+	printf("reference = %d prediction = %lu correct = %d sensitivity = %.2lf precision = %.2lf auc = %.3lf\n",
+		refsize, items.size(), correct0, correct0 * 100.0 / refsize, correct0 * 100.0 / items.size(), auc);
 
 	return 0;
 }

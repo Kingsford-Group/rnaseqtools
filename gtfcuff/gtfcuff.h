@@ -35,6 +35,7 @@ public:
 	int build_quant_index();
 
 	int roc(int refsize);
+	int auc(int refsize);
 	int acc(int refsize);
 	int compute_single_accuracy();
 	int match_precision(int refsize, double precision);
