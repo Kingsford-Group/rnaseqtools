@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.69])
-AC_INIT(rnaseqtools, 1.0, mingfu.shao@cs.cmu.edu)
+AC_INIT(rnaseqtools, 1.1, mingfu.shao@cs.cmu.edu)
 AM_INIT_AUTOMAKE()
 AC_CONFIG_SRCDIR([gtfalign/config.h])
 AC_CONFIG_HEADERS([config.h])
