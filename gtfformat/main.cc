@@ -16,7 +16,6 @@ int main(int argc, const char **argv)
 		cout<<"usage: " << endl;
 		cout<<"       " << argv[0] << " RPKM2TPM <in-gtf-file> <out-gtf-file>"<<endl;
 		cout<<"       " << argv[0] << " FPKM2TPM <in-gtf-file> <out-gtf-file>"<<endl;
-		cout<<"       " << argv[0] << " format <in-gtf-file> <out-gtf-file>"<<endl;
 		cout<<"       " << argv[0] << " shrink <in-gtf-file> <out-gtf-file>"<<endl;
 		cout<<"       " << argv[0] << " filter <min-transcript-coverage> <in-gtf-file> <out-gtf-file>"<<endl;
 		cout<<"       " << argv[0] << " stats <in-gtf-file> <exons-bins>"<<endl;
