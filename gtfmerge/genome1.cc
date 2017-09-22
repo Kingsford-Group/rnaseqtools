@@ -144,9 +144,12 @@ string compute_intron_hashing(const transcript &t)
 {
 	string h = t.seqname;
 	
+	// do not consider strand
+	/*
 	if(t.strand == '.') h.append("0");
 	if(t.strand == '+') h.append("1");
 	if(t.strand == '-') h.append("2");
+	*/
 
 	if(t.exons.size() <= 1) return h;
 	int32_t p = t.exons[0].second;
