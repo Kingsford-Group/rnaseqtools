@@ -12,5 +12,6 @@ extern bool merge_coverage_as_counts;
 extern int num_threads;
 
 int parse_parameters(int argc, const char ** argv);
+int print_help();
 
 #endif

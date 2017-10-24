@@ -34,3 +34,14 @@ int parse_parameters(int argc, const char ** argv)
 
 	return 0;
 }
+
+int print_help()
+{
+	printf("\n");
+	printf("usage: gtfmerge union <input-gtf-list> <output-unioned-gtf> [options]\n");
+	printf("\n");
+	printf("options:\n");
+	printf(" %-14s  %s\n", "-t <integer>",  "number of threads");
+	printf(" %-14s  %s\n", "-n",  "output coverage as counts");
+	return 0;
+}

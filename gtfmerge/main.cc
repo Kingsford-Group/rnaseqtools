@@ -14,7 +14,7 @@ int main(int argc, const char **argv)
 {
 	if(argc == 1)
 	{
-		cout<<"usage: "<<argv[0]<< " union <input-gtf-file-list> <output-merged-gtf> [options]"<<endl;
+		print_help();
 		return 0;
 	}
 
