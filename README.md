@@ -19,7 +19,7 @@ gtfmerge union <input-gtf-list> <output-gtf-file> [-t <integer>] [-n]
 ```
 1. The parameter `input-gtf-list` is mandatory, which provides a list of `gtf` files (each line specifies a file name).
 Each `gtf` file gives a set of transcripts. 
-2. The parameter `output-gtf-file` is mandatory, will contain the merged transcripts, also in `gtf` file format.
+2. The parameter `output-gtf-file` is mandatory, which contain the merged transcripts, also in `gtf` file format.
 3. `-t <integer>` is optional. If it is provided, then the multiple-threading mode will be open, and the specified
 number of threads will be used.
 4. `-n` is optional. If it is used, then the number of appearance of each unioned transcript (i.e., how many input gtf files
