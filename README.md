@@ -26,3 +26,17 @@ number of threads will be used.
 contain this transcript) will be recorded and reported in the `cov` field of the output file. If this parameter is not used,
 then the sum of the coverage of each unioned transcript (i.e., sum up of the coverage of all transcripts in the input
 gtf files that are identical to this transcript) will be recorded and reported in the `cov` field of the output file.
+
+# gtfcuff
+This tool is to evaluate the accuracy of predicted transcripts. 
+To use this tool, you first need to run `gffcompare`, which will
+generate several files, and among them `gtfcuff` will usually
+use `.tmap`. For example, to compute the AUC score (the parameter
+used to draw the curve is the predicted coverage of all the transcripts),
+you can use
+```
+gtfcuff auc <gffcompare.tmap> <number-of-exons-in-reference>
+```
+The last parameter is usually the number of multi-exon transcripts in the
+reference annotation. You can find this number in the `.stats` file
+produced by `gffcompare`. The AUC score will be printed to the standard output.
