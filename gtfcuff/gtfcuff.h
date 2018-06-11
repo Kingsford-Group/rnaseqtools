@@ -35,13 +35,14 @@ public:
 	int build_quant_index();
 
 	int roc(int refsize);
+	int roc_salmon(int refsize, const string &quant_file);
 	int auc(int refsize);
 	int acc(int refsize);
 	int compute_single_accuracy();
 	int match_precision(int refsize, double precision);
 	int match_sensitivity(int refsize, double sensitivity);
 	int match_correct(int refsize, int mcorrect);
-	int roc_trunc(int refsize, double min_coverage, double max_coverage);
+	int roc_trunc(int refsize, double min_coverage, double max_coverage, bool use_quant);
 	int roc_quant(const string &qfile, double min_tpm, double max_tpm);
 	int acc_quant(const string &qfile, double tpm_threshold);
 	int split(const string &f1, const string &f2);

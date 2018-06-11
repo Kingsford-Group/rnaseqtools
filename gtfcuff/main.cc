@@ -16,6 +16,7 @@ int main(int argc, const char **argv)
 	{
 		cout<<"usage: " <<endl;
 		cout<<"       " <<argv[0] << " roc <cuff.tmap> <ref-size>"<<endl;
+		cout<<"       " <<argv[0] << " roc-salmon <cuff.tmap> <ref-size> <salmon-quant-file>"<<endl;
 		cout<<"       " <<argv[0] << " auc <cuff.tmap> <ref-size>"<<endl;
 		cout<<"       " <<argv[0] << " acc <cuff.tmap> <ref-size>"<<endl;
 		cout<<"       " <<argv[0] << " acc-single <cuff.tmap>"<<endl;
@@ -45,6 +46,13 @@ int main(int argc, const char **argv)
 		assert(argc == 4);
 		gtfcuff cuff(argv[2]);
 		cuff.roc(atoi(argv[3]));
+	}
+
+	if(string(argv[1]) == "roc_salmon")
+	{
+		assert(argc == 5);
+		gtfcuff cuff(argv[2]);
+		cuff.roc_salmon(atoi(argv[3]), argv[4]);
 	}
 
 	if(string(argv[1]) == "acc")
@@ -86,7 +94,7 @@ int main(int argc, const char **argv)
 	{
 		assert(argc == 6);
 		gtfcuff cuff(argv[2]);
-		cuff.roc_trunc(atoi(argv[3]), atof(argv[4]), atof(argv[5]));
+		cuff.roc_trunc(atoi(argv[3]), atof(argv[4]), atof(argv[5]), false);
 	}
 
 	if(string(argv[1]) == "roc-quant")

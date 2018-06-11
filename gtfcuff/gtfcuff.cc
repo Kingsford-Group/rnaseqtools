@@ -175,12 +175,19 @@ int gtfcuff::build_pred_unique(const string &file)
 	return 0;
 }
 
-int gtfcuff::roc(int refsize)
+int gtfcuff::roc_salmon(int refsize, const string &quant_file)
 {
-	return roc_trunc(refsize, -1, DBL_MAX);
+	read_quant(quant_file);
+	build_quant_index();
+	return roc_trunc(refsize, -1, DBL_MAX, true);
 }
 
-int gtfcuff::roc_trunc(int refsize, double min_coverage, double max_coverage)
+int gtfcuff::roc(int refsize)
+{
+	return roc_trunc(refsize, -1, DBL_MAX, false);
+}
+
+int gtfcuff::roc_trunc(int refsize, double min_coverage, double max_coverage, bool use_quant)
 {
 	if(items.size() == 0) return 0;
 
@@ -189,7 +196,11 @@ int gtfcuff::roc_trunc(int refsize, double min_coverage, double max_coverage)
 	{
 		if(items[i].coverage < min_coverage) continue;
 		if(items[i].coverage > max_coverage) continue;
-		vt.push_back(items[i]);
+		cuffitem ci = items[i];
+		string s = items[i].transcript_id;
+		if(t2q.find(s) == t2q.end()) ci.coverage = 0;
+		else ci.coverage = qitems[t2q[s]].tpm;
+		vt.push_back(ci);
 	}
 
 	sort(vt.begin(), vt.end(), cuffitem_cmp_coverage);
