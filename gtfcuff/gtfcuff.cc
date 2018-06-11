@@ -196,10 +196,14 @@ int gtfcuff::roc_trunc(int refsize, double min_coverage, double max_coverage, bo
 	{
 		if(items[i].coverage < min_coverage) continue;
 		if(items[i].coverage > max_coverage) continue;
+
 		cuffitem ci = items[i];
-		string s = items[i].transcript_id;
-		if(t2q.find(s) == t2q.end()) ci.coverage = 0;
-		else ci.coverage = qitems[t2q[s]].tpm;
+		if(use_quant == true)
+		{
+			string s = items[i].transcript_id;
+			if(t2q.find(s) == t2q.end()) ci.coverage = 0;
+			else ci.coverage = qitems[t2q[s]].tpm;
+		}
 		vt.push_back(ci);
 	}
 
