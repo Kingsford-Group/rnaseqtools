@@ -197,7 +197,7 @@ int genome1::compare(const genome1 &gy)
 	return 0;
 }
 
-int genome1::stats(const string &file, int n)
+int genome1::stats_exons(const string &file, int n)
 {
 	build_all_transcripts(file);
 	vector<int> counts;
@@ -230,6 +230,30 @@ int genome1::stats(const string &file, int n)
 	{
 		if(counts[k] == 0) printf("0.0 ");
 		else printf("%.2lf ", length[k] * 1.0 / counts[k]);
+	}
+	*/
+
+	return 0;
+}
+
+int genome1::stats_length(const string &file)
+{
+	build_all_transcripts(file);
+	map<int, int> m;
+	for(int i = 0; i < transcripts.size(); i++)
+	{
+		transcript &t = transcripts[i];
+		int l = t.length();
+
+		printf("transcript has length of %d\n", l);
+		if(m.find(l) == m.end()) m.insert(pair<int,int>(l, 1));
+		else m[l]++;
+	}
+
+	/*
+	for(map<int,int>::iterator it = m.begin(); it != m.end(); it++)
+	{
+		printf("transcripts of lenght %d has %d\n", it->first, it->second);
 	}
 	*/
 

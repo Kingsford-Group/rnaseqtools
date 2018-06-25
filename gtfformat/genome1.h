@@ -29,7 +29,8 @@ public:
 	int compare(const genome1 &gy);
 	int shrink(const string &file);
 	int filter(const string &file, double c);
-	int stats(const string &file, int n);
+	int stats_exons(const string &file, int n);
+	int stats_length(const string &file);
 
 private:
 	int build_multiexon_transcripts(const string &file);

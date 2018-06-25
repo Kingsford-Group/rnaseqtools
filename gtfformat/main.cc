@@ -18,7 +18,8 @@ int main(int argc, const char **argv)
 		cout<<"       " << argv[0] << " FPKM2TPM <in-gtf-file> <out-gtf-file>"<<endl;
 		cout<<"       " << argv[0] << " shrink <in-gtf-file> <out-gtf-file>"<<endl;
 		cout<<"       " << argv[0] << " filter <min-transcript-coverage> <in-gtf-file> <out-gtf-file>"<<endl;
-		cout<<"       " << argv[0] << " stats <in-gtf-file> <exons-bins>"<<endl;
+		cout<<"       " << argv[0] << " stats-exons <in-gtf-file> <exons-bins>"<<endl;
+		cout<<"       " << argv[0] << " stats-length <in-gtf-file>"<<endl;
 		return 0;
 	}
 
@@ -50,10 +51,16 @@ int main(int argc, const char **argv)
 		gm.write(argv[4]);
 	}
 
-	if(string(argv[1]) == "stats")
+	if(string(argv[1]) == "stats-exons")
 	{
 		genome1 gm;
-		gm.stats(argv[2], atoi(argv[3]));
+		gm.stats_exons(argv[2], atoi(argv[3]));
+	}
+
+	if(string(argv[1]) == "stats-length")
+	{
+		genome1 gm;
+		gm.stats_length(argv[2]);
 	}
 
     return 0;
