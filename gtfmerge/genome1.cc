@@ -140,6 +140,13 @@ int genome1::write(const string &file)
 	fout.close();
 }
 
+string tostring(int p)
+{
+	char buf[10240];
+	sprintf(buf, "%d", p);
+	return string(buf);
+}
+
 string compute_intron_hashing(const transcript &t)
 {
 	string h = t.seqname;
@@ -153,15 +160,15 @@ string compute_intron_hashing(const transcript &t)
 
 	if(t.exons.size() <= 1) return h;
 	int32_t p = t.exons[0].second;
-	h.append(to_string(p));
+	h.append(tostring(p));
 
 	for(int k = 1; k < t.exons.size(); k++)
 	{
 		int32_t q1 = t.exons[k].first;
 		int32_t q2 = t.exons[k].second;
-		h.append(to_string(q1 - p));
+		h.append(tostring(q1 - p));
 		if(k == t.exons.size() - 1) break;
-		h.append(to_string(q2 - q1));
+		h.append(tostring(q2 - q1));
 		p = q2;
 	}
 	return h;

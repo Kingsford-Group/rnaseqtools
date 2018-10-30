@@ -47,6 +47,7 @@ private:
 	int compare_junction(string, const MPD32&, const MPD32&);
 };
 
+string tostring(int32_t p);
 string compute_chain_hashing(const transcript &t);
 
 #endif

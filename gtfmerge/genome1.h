@@ -35,6 +35,7 @@ private:
 	int build_multiexon_transcripts(const string &file);
 };
 
+string tostring(int p);
 string compute_intron_hashing(const transcript &t);
 
 #endif

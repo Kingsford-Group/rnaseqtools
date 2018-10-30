@@ -1,6 +1,6 @@
 bin_PROGRAMS=gtfmerge
 
-gtfmerge_CPPFLAGS = -pthread -std=c++11 -I../lib/gtf
+gtfmerge_CPPFLAGS = -pthread -I../lib/gtf -std=c++11
 gtfmerge_LDFLAGS = -L../lib/gtf -pthread
 gtfmerge_LDADD = -lgtf
 

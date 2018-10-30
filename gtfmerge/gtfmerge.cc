@@ -1,3 +1,4 @@
+#include "genome1.h"
 #include "gtfmerge.h"
 #include "config.h"
 
@@ -12,7 +13,7 @@ int do_union(const vector<string> &v, genome1 *gm, const string &suffix)
 	{
 		string s = v[k];
 		genome1 g(s);
-		g.add_suffix(suffix + "-" + to_string(k));
+		g.add_suffix(suffix + "-" + tostring(k));
 		gm->build_union(g);
 		cout << "union genome " << ++cnt << " " << s.c_str() << endl << flush;
 	}
@@ -41,7 +42,7 @@ int gtfmerge::build_union(const string &file)
 	for(int k = 0; k < sv.size(); k++)
 	{
 		printf("thread %d processes %lu genomes\n", k, sv[k].size());
-		threads.emplace_back(do_union, sv[k], &(gv[k]), string("x").append(to_string(k)));
+		threads.emplace_back(do_union, sv[k], &(gv[k]), string("x").append(tostring(k)));
 	}
 	for(int k = 0; k < threads.size(); k++)
 	{

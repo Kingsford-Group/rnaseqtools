@@ -1,7 +1,7 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-AC_PREREQ([2.69])
+AC_PREREQ([2.63])
 AC_INIT(rnaseqtools, 1.0.2, mingfu.shao@cs.cmu.edu)
 AM_INIT_AUTOMAKE()
 AC_CONFIG_SRCDIR([gtfalign/config.h])
@@ -19,7 +19,7 @@ AC_PROG_RANLIB
 AC_CHECK_HEADERS([stdint.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
-AC_CHECK_HEADER_STDBOOL
+#AC_CHECK_HEADER_STDBOOL
 AC_TYPE_INT32_T
 AC_TYPE_INT64_T
 AC_TYPE_SIZE_T

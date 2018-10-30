@@ -1,6 +1,6 @@
 bin_PROGRAMS=gtfalign
 
-gtfalign_CPPFLAGS = -std=c++11 -I../lib/gtf -std=c++11
+gtfalign_CPPFLAGS = -I../lib/gtf
 gtfalign_LDFLAGS = -L../lib/gtf
 gtfalign_LDADD = -lgtf
 

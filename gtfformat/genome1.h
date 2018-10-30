@@ -43,5 +43,6 @@ private:
 bool transcript_cmp_coverage(const transcript &x, const transcript &y);
 bool transcript_cmp_intron_chain(const transcript &x, const transcript &y);
 string compute_intron_hashing(const transcript &t);
+string tostring(int32_t p);
 
 #endif
