@@ -41,7 +41,7 @@ public:
 public:
 	int compare_boundary(const genome1 &gm);
 	int compare_junction(const genome1 &gm);
-	int compare_chain(genome1 &gm);
+	int compare_chain(genome1 &gm, const string &file);
 
 public:
 	int build_chain_hashing(const string &file);

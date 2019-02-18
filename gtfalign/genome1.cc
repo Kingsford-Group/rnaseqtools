@@ -47,8 +47,11 @@ int genome1::clear()
 	return 0;
 }
 
-int genome1::compare_chain(genome1 &gm)
+int genome1::compare_chain(genome1 &gm, const string &file)
 {
+	ofstream fout(file.c_str());
+	if(fout.fail()) return 0;
+
 	MSPIM64 &m = gm.boundary_hashing;
 
 	for(int k = 0; k < transcripts.size(); k++)
@@ -60,41 +63,47 @@ int genome1::compare_chain(genome1 &gm)
 		int32_t p2 = chain.back().second;
 		int64_t pp = pack(p1, p2);
 
-		string type;
+		string type = "N/A";
 		string match = "N/A";
 
 		if(m.find(t.seqname) == m.end())
 		{
 			type = "chrm_mismatch";
-			continue;
 		}
-
-		PIM64 &pim = m[t.seqname];
-		if(pim.find(pp) == pim.end())
+		else
 		{
-			type = "boundary_mismatch";
-			continue;
+			PIM64 &pim = m[t.seqname];
+			if(pim.find(pp) == pim.end())
+			{
+				type = "boundary_mismatch";
+			}
+			else
+			{
+				type = "chain_mismatch";
+
+				set<int> &s = pim[pp];
+				for(set<int>::iterator it = s.begin(); it != s.end(); it++)
+				{
+					transcript &tt = gm.transcripts[*it];
+					if(tt.intron_chain_match(t) == false) continue;
+
+					match = tt.transcript_id;
+					type = "strand_mismatch";
+
+					if(tt.strand != t.strand) continue;
+					type = "identical";
+
+					break;
+				}
+			}
 		}
 
-		type = "chain_mismatch";
-
-		set<int> &s = pim[pp];
-		for(set<int>::iterator it = s.begin(); it != s.end(); it++)
-		{
-			transcript &tt = gm.transcripts[*it];
-			if(tt.intron_chain_match(t) == false) continue;
-
-			match = tt.transcript_id;
-			type = "strand_mismatch";
-			
-			if(tt.strand != t.strand) continue;
-			type = "identical";
-
-			break;
-		}
-
+		if(type == "chain_mismatch") t.write(fout);
 		printf("%s %s %s\n", t.transcript_id.c_str(), type.c_str(), match.c_str());
 	}
+	
+	fout.close();
+
 	return 0;
 }
 
@@ -269,6 +278,7 @@ int genome1::add_transcript2(const transcript &t)
 	}
 
 	transcripts.push_back(t);
+	//printf("add transcript %s, total = %lu\n", t.transcript_id, transcripts.size());
 	return 0;
 }
 
