@@ -6,7 +6,7 @@
 genome1::genome1()
 {}
 
-int genome1::build(const string &file)
+int genome1::build_chain_hashing(const string &file)
 {
 	clear();
 	genome gm(file);
@@ -17,7 +17,24 @@ int genome1::build(const string &file)
 		{
 			const transcript &t = g.transcripts[k];
 			if(t.exons.size() <= 1) continue;
-			add_transcript(t);
+			add_transcript1(t);
+		}
+	}
+	return 0;
+}
+
+int genome1::build_boundary_hashing(const string &file)
+{
+	clear();
+	genome gm(file);
+	for(int i = 0; i < gm.genes.size(); i++)
+	{
+		const gene &g = gm.genes[i];
+		for(int k = 0; k < g.transcripts.size(); k++)
+		{
+			const transcript &t = g.transcripts[k];
+			if(t.exons.size() <= 1) continue;
+			add_transcript2(t);
 		}
 	}
 	return 0;
@@ -27,6 +44,57 @@ int genome1::clear()
 {
 	transcripts.clear();
 	chain_hashing.clear();
+	return 0;
+}
+
+int genome1::compare_chain(genome1 &gm)
+{
+	MSPIM64 &m = gm.boundary_hashing;
+
+	for(int k = 0; k < transcripts.size(); k++)
+	{
+		transcript &t = transcripts[k];
+		vector<PI32> chain = t.get_intron_chain();
+		assert(chain.size() >= 1);
+		int32_t p1 = chain.front().first;
+		int32_t p2 = chain.back().second;
+		int64_t pp = pack(p1, p2);
+
+		string type;
+		string match = "N/A";
+
+		if(m.find(t.seqname) == m.end())
+		{
+			type = "chrm_mismatch";
+			continue;
+		}
+
+		PIM64 &pim = m[t.seqname];
+		if(pim.find(pp) == pim.end())
+		{
+			type = "boundary_mismatch";
+			continue;
+		}
+
+		type = "chain_mismatch";
+
+		set<int> &s = pim[pp];
+		for(set<int>::iterator it = s.begin(); it != s.end(); it++)
+		{
+			transcript &tt = gm.transcripts[*it];
+			if(tt.intron_chain_match(t) == false) continue;
+
+			match = tt.transcript_id;
+			type = "strand_mismatch";
+			
+			if(tt.strand != t.strand) continue;
+			type = "identical";
+
+			break;
+		}
+
+		printf("%s %s %s\n", t.transcript_id.c_str(), type.c_str(), match.c_str());
+	}
 	return 0;
 }
 
@@ -130,8 +198,7 @@ int genome1::compare_junction(string chrm, const MPD32 &mx, const MPD32 &my)
 	return 0;
 }
 
-
-int genome1::add_transcript(const transcript &t)
+int genome1::add_transcript1(const transcript &t)
 {
 	if(t.exons.size() <= 1) return 0;
 
@@ -158,6 +225,50 @@ int genome1::add_transcript(const transcript &t)
 		assert(k >= 0 && k < transcripts.size());
 		transcripts[k].coverage += t.coverage;
 	}
+	return 0;
+}
+
+int genome1::add_transcript2(const transcript &t)
+{
+	if(t.exons.size() <= 1) return 0;
+	int index = transcripts.size();
+
+	// add boundaries and junctions
+	vector<PI32> chain = t.get_intron_chain();
+	assert(chain.size() >= 1);
+
+	int32_t p1 = chain.front().first;
+	int32_t p2 = chain.back().second;
+	int64_t pp = pack(p1, p2);
+
+	string h = t.seqname;
+	
+	/*
+	if(t.strand == '.') h.append("0");
+	if(t.strand == '+') h.append("1");
+	if(t.strand == '-') h.append("2");
+	*/
+
+	if(boundary_hashing.find(h) == boundary_hashing.end())
+	{
+		PIM64 pim;
+		set<int> s;
+		s.insert(index);
+		pim.insert(PIS64(pp, s));
+		boundary_hashing.insert(PSPIM64(h, pim));
+	}
+	else if(boundary_hashing[h].find(pp) == boundary_hashing[h].end())
+	{
+		set<int> s;
+		s.insert(index);
+		boundary_hashing[h].insert(PIS64(pp, s));
+	}
+	else
+	{
+		boundary_hashing[h][pp].insert(index);
+	}
+
+	transcripts.push_back(t);
 	return 0;
 }
 
