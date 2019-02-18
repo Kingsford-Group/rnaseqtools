@@ -99,7 +99,7 @@ int genome1::compare_chain(genome1 &gm, const string &file)
 		}
 
 		if(type == "chain_mismatch") t.write(fout);
-		printf("%s %s %s\n", t.transcript_id.c_str(), type.c_str(), match.c_str());
+		printf("%s %s %s %.2lf\n", t.transcript_id.c_str(), type.c_str(), match.c_str(), t.coverage);
 	}
 	
 	fout.close();
