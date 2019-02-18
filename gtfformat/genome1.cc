@@ -159,6 +159,21 @@ int genome1::filter(const string &file, double c)
 	return 0;
 }
 
+int genome1::top(const string &file, int n)
+{
+	build_multiexon_transcripts(file);
+	sort(transcripts.begin(), transcripts.end(), transcript_cmp_coverage);
+
+	vector<transcript> vv;
+	for(int i = transcripts.size() - 1; i >= 0; i--)
+	{
+		vv.push_back(transcripts[i]);
+		if(vv.size() >= n) break;
+	}
+	transcripts = vv;
+	return 0;
+}
+
 int genome1::compare(const genome1 &gy)
 {
 	MII x2y;

@@ -18,6 +18,7 @@ int main(int argc, const char **argv)
 		cout<<"       " << argv[0] << " FPKM2TPM <in-gtf-file> <out-gtf-file>"<<endl;
 		cout<<"       " << argv[0] << " shrink <in-gtf-file> <out-gtf-file>"<<endl;
 		cout<<"       " << argv[0] << " filter <min-transcript-coverage> <in-gtf-file> <out-gtf-file>"<<endl;
+		cout<<"       " << argv[0] << " top <integer-n> <in-gtf-file> <out-gtf-file>"<<endl;
 		cout<<"       " << argv[0] << " stats-exons <in-gtf-file> <exons-bins>"<<endl;
 		cout<<"       " << argv[0] << " stats-length <in-gtf-file>"<<endl;
 		return 0;
@@ -48,6 +49,13 @@ int main(int argc, const char **argv)
 	{
 		genome1 gm;
 		gm.filter(argv[3], atof(argv[2]));
+		gm.write(argv[4]);
+	}
+
+	if(string(argv[1]) == "top")
+	{
+		genome1 gm;
+		gm.top(argv[3], atoi(argv[2]));
 		gm.write(argv[4]);
 	}
 
