@@ -46,6 +46,8 @@ produced by `gffcompare`. The AUC score will be printed to the standard output.
 This tool is to process single gtf file. It provides several functions. 
 First, you can use the following command to only select those transcripts
 whose length are in the range between `min-length` and `max-length`.
+Note that here *length* is defined as the sum of the lengths of all *exons*
+in the transcript.
 ```
 gtfformat <min-length> <max-length> <input-gtf-file> <output-gtf-file> 
 ```
