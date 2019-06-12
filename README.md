@@ -40,3 +40,12 @@ gtfcuff auc <gffcompare.tmap> <number-of-exons-in-reference>
 The last parameter is usually the number of multi-exon transcripts in the
 reference annotation. You can find this number in the `.stats` file
 produced by `gffcompare`. The AUC score will be printed to the standard output.
+
+
+# gtfformat
+This tool is to process single gtf file. It provides several functions. 
+First, you can use the following command to only select those transcripts
+whose length are in the range between `min-length` and `max-length`.
+```
+gtfformat <min-length> <max-length> <input-gtf-file> <output-gtf-file> 
+```
