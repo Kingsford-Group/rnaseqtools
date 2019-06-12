@@ -146,6 +146,20 @@ int genome1::shrink(const string &file)
 	return 0;
 }
 
+int genome1::select_by_length(const string &file, int min_length, int max_length)
+{
+	build_all_transcripts(file);
+	vector<transcript> vv;
+	for(int i = 0; i < transcripts.size(); i++)
+	{
+		if(transcripts[i].length() < min_length) continue;
+		if(transcripts[i].length() > max_length) continue;
+		vv.push_back(transcripts[i]);
+	}
+	transcripts = vv;
+	return 0;
+}
+
 int genome1::filter(const string &file, double c)
 {
 	build_multiexon_transcripts(file);

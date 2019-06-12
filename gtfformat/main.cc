@@ -21,6 +21,7 @@ int main(int argc, const char **argv)
 		cout<<"       " << argv[0] << " top <integer-n> <in-gtf-file> <out-gtf-file>"<<endl;
 		cout<<"       " << argv[0] << " stats-exons <in-gtf-file> <exons-bins>"<<endl;
 		cout<<"       " << argv[0] << " stats-length <in-gtf-file>"<<endl;
+		cout<<"       " << argv[0] << " length <min-transcript-length> <max-transcript-length> <in-gtf-file> <out-gtf-file>"<<endl;
 		return 0;
 	}
 
@@ -69,6 +70,13 @@ int main(int argc, const char **argv)
 	{
 		genome1 gm;
 		gm.stats_length(argv[2]);
+	}
+
+	if(string(argv[1]) == "length")
+	{
+		genome1 gm;
+		gm.select_by_length(argv[4], atoi(argv[2]), atoi(argv[3]));
+		gm.write(argv[5]);
 	}
 
     return 0;
