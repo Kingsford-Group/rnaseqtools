@@ -15,7 +15,7 @@ int main(int argc, const char **argv)
 	if(argc == 1)
 	{
 		cout<<"usage: " <<endl;
-		cout<<"       " <<argv[0] << " roc <cuff.tmap> <ref-size>"<<endl;
+		cout<<"       " <<argv[0] << " roc <cuff.tmap> <ref-size> <cov|TPM|FPKM>"<<endl;
 		cout<<"       " <<argv[0] << " roc-salmon <cuff.tmap> <ref-size> <salmon-quant-file>"<<endl;
 		cout<<"       " <<argv[0] << " auc <cuff.tmap> <ref-size>"<<endl;
 		cout<<"       " <<argv[0] << " acc <cuff.tmap> <ref-size>"<<endl;
@@ -43,8 +43,8 @@ int main(int argc, const char **argv)
 
 	if(string(argv[1]) == "roc")
 	{
-		assert(argc == 4);
-		gtfcuff cuff(argv[2]);
+		assert(argc == 5);
+		gtfcuff cuff(argv[2], argv[4]);
 		cuff.roc(atoi(argv[3]));
 	}
 

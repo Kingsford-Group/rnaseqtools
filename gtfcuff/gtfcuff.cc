@@ -15,6 +15,13 @@ gtfcuff::gtfcuff(const string &cufffile)
 	build_cuff_index();
 }
 
+gtfcuff::gtfcuff(const string &cufffile, const string &m)
+{
+	measure = m;
+	read_cuff(cufffile);
+	build_cuff_index();
+}
+
 int gtfcuff::assign_pred(const string &file)
 {
 	genome gm(file);
@@ -207,7 +214,10 @@ int gtfcuff::roc_trunc(int refsize, double min_coverage, double max_coverage, bo
 		vt.push_back(ci);
 	}
 
-	sort(vt.begin(), vt.end(), cuffitem_cmp_coverage);
+	if(measure == "TPM") sort(vt.begin(), vt.end(), cuffitem_cmp_TPM);
+	else if(measure == "FPKM") sort(vt.begin(), vt.end(), cuffitem_cmp_FPKM);
+	else sort(vt.begin(), vt.end(), cuffitem_cmp_coverage);
+
 
 	int correct = 0;
 	for(int i = 0; i < vt.size(); i++) if(vt[i].code == '=') correct++;
@@ -228,8 +238,8 @@ int gtfcuff::roc_trunc(int refsize, double min_coverage, double max_coverage, bo
 
 		if(i % 100 == 0)
 		{
-			printf("ROC: reference = %d prediction = %lu correct = %d sensitivity = %.2lf precision = %.2lf | coverage = %.3lf, length = %d\n",
-				refsize, vt.size() - i, correct, sen, pre, vt[i].coverage, vt[i].length);
+			printf("ROC: reference = %d prediction = %lu correct = %d sensitivity = %.2lf precision = %.2lf | coverage = %.3lf, TPM = %.3lf, FPKM = %.3lf, length = %d\n",
+				refsize, vt.size() - i, correct, sen, pre, vt[i].coverage, vt[i].TPM, vt[i].FPKM, vt[i].length);
 		}
 
 		if(vt[i].code == '=') correct--;

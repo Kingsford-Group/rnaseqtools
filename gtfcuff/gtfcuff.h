@@ -13,8 +13,10 @@ class gtfcuff
 {
 public:
 	gtfcuff(const string &cufffile);
+	gtfcuff(const string &cufffile, const string &m);
 
 public:
+	string measure;
 	vector<cuffitem> items;
 	vector<transcript> vpred;	// predicted transcripts
 	vector<transcript> vref;	// reference transcripts

@@ -23,9 +23,13 @@ public:
 	char code;
 	int length;
 	double coverage;
+	double FPKM;
+	double TPM;
 };
 
 bool cuffitem_cmp_coverage(const cuffitem &x, const cuffitem &y);
+bool cuffitem_cmp_TPM(const cuffitem &x, const cuffitem &y);
+bool cuffitem_cmp_FPKM(const cuffitem &x, const cuffitem &y);
 bool cuffitem_cmp_length(const cuffitem &x, const cuffitem &y);
 
 #endif

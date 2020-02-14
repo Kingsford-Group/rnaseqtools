@@ -29,7 +29,11 @@ int cuffitem::parse(const string &s)
 	sstr>>buf;
 	transcript_id.assign(buf);
 	sstr>>num_exons;
-	sstr>>buf>>buf>>buf;
+	sstr>>buf;
+	FPKM = atof(buf);
+	sstr>>buf;
+	TPM = atof(buf);
+	sstr>>buf;
 	coverage = atof(buf);
 	sstr>>buf;
 	length = atoi(buf);
@@ -52,5 +56,17 @@ bool cuffitem_cmp_coverage(const cuffitem &x, const cuffitem &y)
 bool cuffitem_cmp_length(const cuffitem &x, const cuffitem &y)
 {
 	if(x.length < y.length) return true;
+	else return false;
+}
+
+bool cuffitem_cmp_TPM(const cuffitem &x, const cuffitem &y)
+{
+	if(x.TPM < y.TPM) return true;
+	else return false;
+}
+
+bool cuffitem_cmp_FPKM(const cuffitem &x, const cuffitem &y)
+{
+	if(x.FPKM < y.FPKM) return true;
 	else return false;
 }
