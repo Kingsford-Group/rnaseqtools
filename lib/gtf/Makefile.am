@@ -1,6 +1,6 @@
 noinst_LIBRARIES = libgtf.a
 
-UTILDIR = ../util
+UTILDIR = $(top_srcdir)/lib/util
 
 libgtf_a_CPPFLAGS = -I$(UTILDIR)
 

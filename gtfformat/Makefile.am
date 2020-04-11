@@ -1,7 +1,7 @@
 bin_PROGRAMS=gtfformat
 
-gtfformat_CPPFLAGS = -I../lib/gtf
-gtfformat_LDFLAGS = -L../lib/gtf
+gtfformat_CPPFLAGS = -I$(top_srcdir)/lib/gtf
+gtfformat_LDFLAGS = -L$(top_srcdir)/lib/gtf
 gtfformat_LDADD = -lgtf
 
 gtfformat_SOURCES = main.cc \

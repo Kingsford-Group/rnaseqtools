@@ -1,7 +1,7 @@
 bin_PROGRAMS=gtfalign
 
-gtfalign_CPPFLAGS = -I../lib/gtf
-gtfalign_LDFLAGS = -L../lib/gtf
+gtfalign_CPPFLAGS = -I$(top_srcdir)/lib/gtf
+gtfalign_LDFLAGS = -L$(top_srcdir)/lib/gtf
 gtfalign_LDADD = -lgtf
 
 gtfalign_SOURCES = genome1.h genome1.cc \
