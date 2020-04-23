@@ -354,6 +354,7 @@ int genome1::write(const string &file)
 		t.write(fout);
 	}
 	fout.close();
+	return 0;
 }
 
 string tostring(int32_t p)
