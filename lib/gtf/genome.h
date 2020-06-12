@@ -9,6 +9,7 @@ See LICENSE for licensing.
 
 #include <string>
 #include <map>
+#include <set>
 #include "gene.h"
 
 using namespace std;
@@ -28,6 +29,7 @@ public:
 	// read and write
 	int read(const string &file);
 	int write(const string &file) const;
+    int write_all(const string &input, const string &output, set<string> geneIds) const;
 
 	// modify
 	int add_gene(const gene &g);
@@ -40,6 +42,7 @@ public:
 	// filter
 	int filter_single_exon_transcripts();
 	int filter_low_coverage_transcripts(double min_coverage);
+    set<string> filter_gene_with_minor_transcripts(int min_num);
 
 	// fetch information
 	const gene* get_gene(string name) const;

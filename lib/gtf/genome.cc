@@ -76,6 +76,33 @@ int genome::read(const string &file)
 	return 0;
 }
 
+int genome::write_all(const string &input, const string &output, set<string> geneIds) const
+{
+    if(input == "" || output == "") return 0;
+
+	ifstream fin(input.c_str());
+	if(fin.fail())
+	{
+		printf("open file %s error\n", input.c_str());
+		return 0;
+	}
+    ofstream fout(output.c_str());
+    char line[102400];
+    printf("Filter %ld out of %ld genes\n", genes.size()-geneIds.size(), genes.size());
+	while(fin.getline(line, 102400, '\n'))
+    {
+        item ge(line);
+        if(geneIds.find(ge.gene_id) != geneIds.end())
+        {
+            fout << line << endl;
+        }
+    }
+
+    fin.close();
+    fout.close();
+    return 0;
+}
+
 int genome::write(const string &file) const
 {
 	ofstream fout(file.c_str());
@@ -200,6 +227,17 @@ int genome::filter_low_coverage_transcripts(double min_coverage)
 		genes[i].filter_low_coverage_transcripts(min_coverage);
 	}
 	return 0;
+}
+
+set<string> genome::filter_gene_with_minor_transcripts(int min_num)
+{
+    set<string> geneIds;
+    for(int i = 0; i < genes.size(); i++)
+    {
+        if(genes[i].transcripts.size()>=min_num)
+            geneIds.insert(genes[i].get_gene_id());
+    }
+    return geneIds;
 }
 
 vector<transcript> genome::collect_transcripts() const

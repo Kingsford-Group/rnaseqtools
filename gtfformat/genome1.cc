@@ -371,3 +371,33 @@ string compute_intron_hashing(const transcript &t)
 	}
 	return h;
 }
+
+int genome1::write_all(const string &input, const string &output, set<string> expressedTr)
+{
+    if(input == "" || output == "") return 0;
+
+	ifstream fin(input.c_str());
+	if(fin.fail())
+	{
+		printf("open file %s error\n", input.c_str());
+		return 0;
+	}
+    build_all_transcripts(input);
+    
+    ofstream fout(output.c_str());
+    char line[102400];
+    printf("Express %ld over %ld transcripts\n", expressedTr.size(), transcripts.size());
+	while(fin.getline(line, 102400, '\n'))
+    {
+        item ge(line);
+        if(expressedTr.find(ge.transcript_id) != expressedTr.end())
+        {
+            fout << line << endl;
+        }
+    }
+
+    fin.close();
+    fout.close();
+    return 0;
+}
+
