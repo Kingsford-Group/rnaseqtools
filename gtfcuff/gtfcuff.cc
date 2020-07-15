@@ -229,14 +229,15 @@ int gtfcuff::roc_trunc(int refsize, double min_coverage, double max_coverage, bo
 	int max_correct = 0;
 	int max_size = 0;
 	double sen0 = correct * 100.0 / refsize;
+	int total_corret = correct;
 	for(int i = 0; i < vt.size(); i++)
 	{
 		double sen = correct * 100.0 / refsize;
 		double pre = correct * 100.0 / (vt.size() - i);
 
-		if(sen * 10.0 < sen0) break;
-
-		if(i % 100 == 0)
+		//if(sen * 10.0 < sen0) break;
+		//if(i % 100 == 0)
+		if((total_correct - corret) % 10 == 0)
 		{
 			printf("ROC: reference = %d prediction = %lu correct = %d sensitivity = %.2lf precision = %.2lf | coverage = %.3lf, TPM = %.3lf, FPKM = %.3lf, length = %d\n",
 				refsize, vt.size() - i, correct, sen, pre, vt[i].coverage, vt[i].TPM, vt[i].FPKM, vt[i].length);
