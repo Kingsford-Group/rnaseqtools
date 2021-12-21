@@ -675,3 +675,19 @@ int gtfcuff::classify()
 	return 0;
 }
 
+int gtfcuff::split_class(string prefix)
+{
+        const string &file1 = prefix + ".2-3.split.gtf";
+        const string &file2 = prefix + ".4-6.split.gtf";
+        const string &file3 = prefix + ".7.split.gtf";
+        ofstream fout1(file1.c_str());
+        ofstream fout2(file2.c_str());
+	ofstream fout3(file3.c_str());
+        for(int k = 0; k < vref.size(); k++)
+        {
+                if(vref[k].exons.size() == 2 || vref[k].exons.size() == 3) vref[k].write(fout1);
+		else if(vref[k].exons.size() >= 4 && vref[k].exons.size() <= 6) vref[k].write(fout2);
+                else if(vref[k].exons.size() >= 7) vref[k].write(fout3);
+        }
+        return 0;
+}

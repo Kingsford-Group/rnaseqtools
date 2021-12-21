@@ -52,6 +52,7 @@ public:
 	int build_pred_unique(const string &file);
 	int classify();
 	int quant();
+	int split_class(string prefix);
 };
 
 #endif
