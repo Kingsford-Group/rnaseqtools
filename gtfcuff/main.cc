@@ -28,6 +28,7 @@ void print_usage(const char* name) {
 	     << "       " << name << " match-precision <cuff.tmap> <ref-size> <balanced-precision>\n"
 	     << "       " << name << " match-sensitivity <cuff.tmap> <ref-size> <balanced-sensitivity>\n"
 	     << "       " << name << " match-correct <cuff.tmap> <ref-size> <balanced-correct>\n"
+	     << "       " << name << " split-quant <cuff.tmap> <quant-file> <tpm-threshold> <ref-gtf-file>\n"
 	     << "       " << name << " split-class <cuff.tmap> <gtf-file> <prefix>"<<std::endl;
 }
 
@@ -189,6 +190,16 @@ int main(int argc, const char **argv)
 		cuff.assign_ref(argv[4]);
 		cuff.quant();
 	}
+        else if(string(argv[1]) == "split-quant") {
+                if(argc != 6) {
+                        cout << "Error: expected 4 arguments for subcommand 'split-quant'\n";
+                        print_usage(argv[0]);
+                        return 1;
+                }
+                gtfcuff cuff(argv[2]);
+		cuff.assign_ref(argv[5]);
+                cuff.split_quant(argv[3], atof(argv[4]));
+        }
         else if(string(argv[1]) == "split-class") {
                 if(argc != 5) {
                         cout << "Error: expected 3 arguments for subcommand 'split-class'\n";

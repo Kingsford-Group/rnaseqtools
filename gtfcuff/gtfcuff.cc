@@ -675,6 +675,46 @@ int gtfcuff::classify()
 	return 0;
 }
 
+int gtfcuff::split_quant(const string &qfile, double tpm_threshold)
+{
+        read_quant(qfile);
+        vector<quantitem> vq;
+        for(int i = 0; i < qitems.size(); i++)
+        {
+                if(qitems[i].tpm < tpm_threshold) continue;
+                vq.push_back(qitems[i]);
+        }
+
+        sort(vq.begin(), vq.end());
+
+        int n = vq.size() / 3;
+        set<string> s1;
+        set<string> s2;
+        set<string> s3;
+        set<string> s4;
+        for(int i = n * 0; i < n * 1; i++) s1.insert(vq[i].transcript_id);
+        for(int i = n * 1; i < n * 2; i++) s2.insert(vq[i].transcript_id);
+        for(int i = n * 2; i < n * 3; i++) s3.insert(vq[i].transcript_id);
+
+	vector< vector<string> > vvv;
+        vector<string> v1(s1.begin(), s1.end());
+        vector<string> v2(s2.begin(), s2.end());
+        vector<string> v3(s3.begin(), s3.end());
+        vvv.push_back(v1);
+        vvv.push_back(v2);
+        vvv.push_back(v3);
+
+        ofstream fout1("low.gtf");
+        ofstream fout2("middle.gtf");
+        ofstream fout3("high.gtf");
+        for(int j = 0; j < n; j++) {
+                vref[t2r[vvv[0][j]]].write(fout1);
+                vref[t2r[vvv[1][j]]].write(fout2);
+                vref[t2r[vvv[2][j]]].write(fout3);
+        }
+	return 0;
+}
+
 int gtfcuff::split_class(string prefix)
 {
         const string &file1 = prefix + ".2-3.split.gtf";
