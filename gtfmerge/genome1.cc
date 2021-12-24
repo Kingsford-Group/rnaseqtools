@@ -2,6 +2,7 @@
 #include "config.h"
 #include <cassert>
 #include <fstream>
+#include <cmath>
 
 genome1::genome1()
 {}
@@ -23,6 +24,7 @@ int genome1::build(const string &file)
 			transcript t = g.transcripts[k];
 			if(t.exons.size() <= 1) continue;
 			if(merge_coverage_as_counts == true) t.coverage = 1.0;
+			else if(merge_coverage_log == true) t.coverage = log(1 + t.coverage);
 			add_transcript(t);
 		}
 	}

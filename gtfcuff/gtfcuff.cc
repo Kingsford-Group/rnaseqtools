@@ -199,6 +199,7 @@ int gtfcuff::roc_trunc(int refsize, double min_coverage, double max_coverage, bo
 	if(items.size() == 0) return 0;
 
 	vector<cuffitem> vt;
+	map<string, int> mt;
 	for(int i = 0; i < items.size(); i++)
 	{
 		if(items[i].coverage < min_coverage) continue;
@@ -212,38 +213,53 @@ int gtfcuff::roc_trunc(int refsize, double min_coverage, double max_coverage, bo
 			else ci.coverage = qitems[t2q[s]].tpm;
 		}
 		vt.push_back(ci);
+
+		if(ci.code == '=') 
+		{
+			if(mt.find(ci.ref_transcript_id) == mt.end()) mt.insert(make_pair(ci.ref_transcript_id, 1));
+			else mt[ci.ref_transcript_id]++;
+		}
 	}
 
 	if(measure == "TPM") sort(vt.begin(), vt.end(), cuffitem_cmp_TPM);
 	else if(measure == "FPKM") sort(vt.begin(), vt.end(), cuffitem_cmp_FPKM);
 	else sort(vt.begin(), vt.end(), cuffitem_cmp_coverage);
 
+	int correct = mt.size();
+	//int correct = 0;
+	//for(int i = 0; i < vt.size(); i++) if(vt[i].code == '=') correct++;
 
-	int correct = 0;
-	for(int i = 0; i < vt.size(); i++) if(vt[i].code == '=') correct++;
-
-	double max_sen = 0;
-	double max_pre = 0;
-	double max_cov = 0;
-	int max_len = 0;
-	int max_correct = 0;
-	int max_size = 0;
-	double sen0 = correct * 100.0 / refsize;
-	int total_corret = correct;
+	int total_correct = correct;
+	bool change = true;
 	for(int i = 0; i < vt.size(); i++)
 	{
 		double sen = correct * 100.0 / refsize;
 		double pre = correct * 100.0 / (vt.size() - i);
 
-		//if(sen * 10.0 < sen0) break;
 		//if(i % 100 == 0)
-		if((total_correct - corret) % 10 == 0)
+		if((total_correct - correct) % 10 == 0 && change == true)
 		{
 			printf("ROC: reference = %d prediction = %lu correct = %d sensitivity = %.2lf precision = %.2lf | coverage = %.3lf, TPM = %.3lf, FPKM = %.3lf, length = %d\n",
 				refsize, vt.size() - i, correct, sen, pre, vt[i].coverage, vt[i].TPM, vt[i].FPKM, vt[i].length);
 		}
 
-		if(vt[i].code == '=') correct--;
+		if(vt[i].code == '=')
+		{
+			string s = vt[i].ref_transcript_id;
+			assert(mt.find(s) != mt.end());
+			if(mt[s] <= 1)
+			{
+				mt.erase(s);
+				correct--;
+			}
+			else
+			{
+				mt[s]--;
+			}
+		}
+
+		if(vt[i].code == '=') change = true;
+		else change = false;
 	}
 
 	return 0;
