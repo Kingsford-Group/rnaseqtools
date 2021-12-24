@@ -52,6 +52,8 @@ public:
 	int build_pred_unique(const string &file);
 	int classify();
 	int quant();
+	int split_quant(const string &qfile, double tpm_threshold);
+	int split_class(string prefix);
 };
 
 #endif
